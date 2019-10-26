@@ -1,5 +1,7 @@
 /target
 **/*.rs.bk
 
+.idea
+
 .env
 pass.key
