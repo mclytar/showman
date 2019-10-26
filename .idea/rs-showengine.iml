@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-gui/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-gui/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-gui/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-gui/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-core/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-core/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-core/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-core/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-api/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-api/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-api/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-api/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-db/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-db/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-db/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-db/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth-base/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth-base/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth-base/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth-base/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-cli/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-cli/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-cli/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-cli/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth-base\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth-base\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth-base\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-core\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-core\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-core\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-db\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-db\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-db\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../rs-showman\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../rs-showman\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../rs-showman\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-gui\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-gui\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-gui\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-api\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-api\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-api\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-auth\benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-cli\examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-cli\tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rs-showman-cli\benches" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-api/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-api\target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-auth-base/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-auth-base\target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-auth/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-auth\target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-cli/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-cli\target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-core/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-core\target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-db/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-db\target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-gui/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rs-showman-gui\target" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="jquery-3.3.1" level="application" />
+    <orderEntry type="library" name="metro" level="application" />
+    <orderEntry type="library" name="platform" level="application" />
+    <orderEntry type="library" name="api:client" level="application" />
+  </component>
+</module>

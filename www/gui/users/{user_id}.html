@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Show Engine -- Spettacolo <?rs var::show_id ?></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+</head>
+<body>
+<?rs template::appbar ?>
+<main class="mt-16 container">
+    <h1 class="py-4">Impostazioni utente</h1>
+    <form id="formUserData"
+          class="custom-validation"
+          data-role="validator"
+          action="javascript:"
+          data-on-submit="sendForm">
+        <h2>Informazioni di base</h2>
+        <div class="form-group">
+            <label>Nome utente</label>
+            <input data-cls-input="fg-darkGray" name="username" type="text" value="<?rs var::username ?>" data-role="input" data-prepend="<span class='mif-user'></span>" placeholder="Nome utente" readonly>
+        </div>
+        <div class="form-group">
+            <label>Ruolo</label>
+            <input data-cls-input="fg-darkGray" name="role" type="text" data-role="input,hint" data-prepend="<span class='mif-tag'></span>" readonly>
+        </div>
+        <div class="form-group">
+            <label>Nome</label>
+            <input name="name" type="text" data-role="input" data-prepend="<span class='mif-profile'></span>" placeholder="Nome" readonly>
+        </div>
+        <div class="form-group">
+            <label>Cognome</label>
+            <input name="surname" type="text" data-role="input" data-prepend="<span class='mif-profile'></span>" placeholder="Cognome" readonly>
+        </div>
+        <div class="form-group">
+            <label>Indirizzo email</label>
+            <input name="email" type="email" data-role="input" data-prepend="<span class='mif-mail'></span>" data-validate="email" placeholder="Email" readonly>
+        </div>
+        <div class="form-group" style="text-align: right">
+            <button id="btnEdit" type="button" class="button primary" data-role="ripple" onclick="setEditMode()">Modifica</button>
+            <button id="btnCancel" type="button" class="button alert" data-role="ripple" onclick="resetForm()" hidden>Annulla</button>
+            <button id="btnConfirm" type="submit" class="button primary" data-role="ripple" hidden>Conferma</button>
+        </div>
+        <input type="hidden" name="information" value="userdata">
+    </form>
+    <form id="formPassword"
+          class="custom-validation mb-8 pb-8"
+          data-role="validator"
+          action="javascript:"
+          data-on-submit="sendForm">
+        <h2>Cambia Password</h2>
+        <div class="form-group">
+            <label>Vecchia password</label>
+            <input name="old_password" type="password" data-role="input" data-prepend="<span class='mif-key'></span>" data-validate="required" placeholder="Vecchia password">
+            <span class="invalid_feedback">Campo richiesto.</span>
+        </div>
+        <div class="form-group">
+            <label>Nuova password</label>
+            <input name="new_password" type="password" data-role="input" data-prepend="<span class='mif-key'></span>" data-validate="required" placeholder="Nuova password">
+            <span class="invalid_feedback">Campo richiesto.</span>
+        </div>
+        <div class="form-group">
+            <label>Ripeti password</label>
+            <input name="repeat_password" type="password" data-role="input" data-prepend="<span class='mif-key'></span>" data-validate="required compare=new_password" placeholder="Ripeti password">
+            <span class="invalid_feedback">Le password devono coincidere.</span>
+        </div>
+        <div class="form-group" style="text-align: right">
+            <button type="submit" class="button alert" data-role="ripple">Modifica</button>
+        </div>
+        <input type="hidden" name="information" value="password">
+    </form>
+</main>
+<!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+<script>
+    function setEditMode() {
+        $('#btnEdit').attr('hidden', '');
+        $('#btnCancel').removeAttr('hidden');
+        $('#btnConfirm').removeAttr('hidden');
+        $('[name="name"]').removeAttr('readonly');
+        $('[name="surname"]').removeAttr('readonly');
+        $('[name="email"]').removeAttr('readonly');
+    }
+
+    function clearEditMode() {
+        $('#btnEdit').removeAttr('hidden');
+        $('#btnCancel').attr('hidden', '');
+        $('#btnConfirm').attr('hidden', '');
+        $('[name="name"]').attr('readonly', '');
+        $('[name="surname"]').attr('readonly', '');
+        $('[name="email"]').attr('readonly', '');
+    }
+
+    function resetForm() {
+        clearEditMode();
+
+        let $form = $('#formUserData');
+        let data = $form.data('default-values');
+        $form.find('[name="username"]').val(data.username);
+        $form.find('[name="name"]').val(data.name);
+        $form.find('[name="surname"]').val(data.surname);
+        $form.find('[name="email"]').val(data.email);
+    }
+
+    function sendForm(form) {
+        let activity = startAwaitBox();
+        $('.invalid-feedback').remove();
+
+        delete form.username;
+        delete form.role;
+
+        form.email = $('[name="email"]').val();
+
+        if (form.information === 'userdata') {
+            console.log('aaa');
+            if (Metro.validator.validate($('#formUserData'), null) === false) return false;
+        }
+        if (form.information === 'password') {
+            console.log('bbb');
+            if (Metro.validator.validate($('#formPassword'), null) === false) return false;
+        }
+
+        $.ajax({
+            url: "/api/users/<?rs var::user_id ?>",
+            method: "PUT",
+            data: form,
+            onSuccess: () => {
+                switch (form.inforomation) {
+                    case 'userdata':
+                        Metro.toast.create("Informazioni aggiornate con successo!", null, null, null, {
+                            timeout: 6000,
+                            distance: 80,
+                            showTop: true,
+                            clsToast: 'success'
+                        });
+                        $('#formUserData').data('default-values', form);
+                        break;
+                    case 'password':
+                        Metro.toast.create("Password aggiornata con successo!", null, null, null, {
+                            timeout: 6000,
+                            distance: 80,
+                            showTop: true,
+                            clsToast: 'success'
+                        });
+                        $('[name="old_password"]').val('');
+                        $('[name="new_password"]').val('');
+                        $('[name="repeat_password"]').val('');
+                        break;
+                }
+            },
+            onFail: (xhr) => {
+                switch (xhr.status) {
+                    case 401:
+                        let $old_pwd = $('[name="old_password"]');
+                        Metro.validator.reset_state($old_pwd);
+                        Metro.validator.set_invalid_state($old_pwd);
+                        Metro.toast.create(`Password errata.`, null, 5000, 'alert');
+                        break;
+                    case 422:
+                        try {
+                            let contents = JSON.parse(xhr.responseText);
+                            for (let component in contents.components) {
+                                $(`[name="${component}"]`)
+                                    .parent()
+                                    .after(`<div class="invalid-feedback fg-red">${contents.components[component]}</div>`)
+                                    .removeClass('valid')
+                                    .addClass('invalid');
+                            }
+                        } catch(e) {
+                            Metro.toast.create("C'&egrave; stato un problema nella gestione dell'errore.", null, null, null, {
+                                timeout: 6000,
+                                distance: 80,
+                                showTop: true,
+                                clsToast: 'alert'
+                            });
+                        }
+                        break;
+                    default:
+                        console.log(xhr);
+                        Metro.toast.create("Errore sconosciuto.", null, null, null, {
+                            timeout: 4000,
+                            distance: 80,
+                            showTop: true,
+                            clsToast: 'alert'
+                        });
+                        break;
+                }
+            },
+            complete: () => { Metro.activity.close(activity); clearEditMode(); }
+        });
+    }
+
+    function parseRole(role) {
+        console.log(role);
+        switch (role.toLowerCase()) {
+            case 'maintainer':
+                return {
+                    label: "Maintainer",
+                    tooltip: "Il <b>Maintainer</b> &egrave; colui che mantiene e gestisce tutto il sistema."
+                };
+            case 'admin':
+                return {
+                    label: "Amministratore",
+                    tooltop: "L'<b>Amministratore</b> &egrave; colui che amministra utenti e spettacoli."
+                };
+            case 'organizer':
+                return {
+                    label: "Organizzatore",
+                    tooltip: "L'<b>Organizzatore</b> &egrave; colui che crea e gestisce nuovi spettacoli."
+                };
+            case 'user':
+                return {
+                    label: "Utente standard",
+                    tooltip: "L'<b>Utente standard</b> pu&ograve; vedere e partecipare agli spettacoli per cui &egrave; autorizzato."
+                };
+            default:
+                return {
+                    label: "Valore non valido",
+                    tooltip: "Errore nell'ottenimento del ruolo."
+                };
+        }
+    }
+
+    function fillForm() {
+        let activity = startAwaitBox();
+        $.json("/api/users/<?rs var::user_id ?>")
+            .then(
+                function (response) {
+                    let $form = $('#formUserData');
+                    $form.data('default-values', response);
+                    let role = parseRole(response.role);
+                    $form.find('[name="username"]').val(response.username);
+                    $form.find('[name="name"]').val(response.name);
+                    $form.find('[name="surname"]').val(response.surname);
+                    $form.find('[name="email"]').val(response.email);
+                    $form.find('[name="role"]')
+                        .val(role.label)
+                        .attr('data-hint-text', role.tooltip);
+                    Metro.activity.close(activity);
+                }, function (xhr) {
+                    Metro.activity.close(activity);
+                    Metro.toast.create(xhr.statusText, null, null, null, {
+                        timeout: 4000,
+                        distance: 80,
+                        showTop: true,
+                        clsToast: 'alert'
+                    });
+                });
+    }
+
+    function startAwaitBox() {
+        return Metro.activity.open({
+            type: 'cycle',
+            overlayColor: '#FFF',
+            overlayAlpha: .5,
+            text: `<div class="mt-2 text-small">Attendi...</div>`
+        });
+    }
+
+    $(() => {
+        fillForm();
+    })
+</script>
+</body>
+</html>

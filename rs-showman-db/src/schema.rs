@@ -1,0 +1,36 @@
+table! {
+    authentication (auth_id) {
+        auth_id -> Unsigned<Integer>,
+        user_id -> Unsigned<Integer>,
+        method -> Varchar,
+        user_data -> Varchar,
+        token -> Text,
+    }
+}
+
+table! {
+    session (token_id) {
+        token_id -> Unsigned<Integer>,
+        user_id -> Unsigned<Integer>,
+        needs_update -> Bool,
+        expiration -> Datetime,
+    }
+}
+
+table! {
+    user (user_id) {
+        user_id -> Unsigned<Integer>,
+        name -> Varchar,
+        surname -> Varchar,
+        role -> Varchar,
+    }
+}
+
+joinable!(authentication -> user (user_id));
+joinable!(session -> user (user_id));
+
+allow_tables_to_appear_in_same_query!(
+    authentication,
+    session,
+    user,
+);

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Show Engine -- {SHOW}/{SCENE}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+</head>
+<body class="w-100 h-100 pos-absolute" style="overflow-y: hidden">
+<?rs template::appbar ?>
+<main class="pt-13 h-100 d-flex flex-column">
+    <?rs template::toolbar ?>
+    <div class="px-16 py-4 container-fluid bg-lightGray" style="flex: 1 1 auto; overflow-y: auto;">
+        <main class="border pt-4 pb-8 px-8 mb-20 bd-gray bg-white">
+            <span class="c-pointer fg-amber mt-2 ml-20-minus pos-absolute"
+                  data-role="popover"
+                  data-popover-text="<span class='fg-amber text-medium'>Autore 1 sta modificando questa scena...</span>"
+                  data-popover-position="right"
+                  data-popover-trigger="click"
+                  data-popover-hide="5000"
+                  data-close-button="false">
+                        <span class="mif-lock mif-5x"></span>
+            </span>
+            <h1>Spettacolo <?rs var::show_id ?> -- Scena <?rs var::scene_id ?></h1>
+            <style>
+                .script-content, .scene-change {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .script-content, .scene-change > li {
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .character, .line {
+                    display: inline-block;
+                    width: 128px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding: 4px;
+                    margin: 1px;
+                    vertical-align: top;
+                }
+
+                .character {
+                    text-align: right;
+                }
+
+                .audio {
+                    display: inline-block;
+                    width: calc(100% - 4px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding: 4px;
+                    margin: 1px;
+                    vertical-align: top;
+                }
+
+                .audio > .label {
+                    padding-left: 4px;
+                    vertical-align: middle;
+                }
+
+                .text {
+                    display: inline-block;
+                    width: calc(100% - 4px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding: 8px 16px;
+                    margin: 1px;
+                    vertical-align: top;
+                }
+
+                .scene-change {
+                    display: inline-block;
+                    width: calc(100% - 4px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding: 8px 16px;
+                    margin: 1px;
+                    vertical-align: top;
+                }
+
+                .comment {
+                    display: inline-block;
+                    width: calc(100% - 4px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding: 8px 16px;
+                    padding-left: 48px;
+                    margin: 1px;
+                    vertical-align: top;
+                    font-style: italic;
+                    font-weight: lighter;
+                }
+
+                .comment::before {
+                    content: '//';
+                    font-weight: lighter;
+                    margin-left: -32px;
+                    margin-right: 14px;
+                }
+
+                .line {
+                    width: calc(100% - 138px);
+                }
+
+                .scene-change span {
+                    vertical-align: center;
+                    margin: 4px;
+                    height: 24px;
+                }
+
+                ul > li {
+                    position: relative;
+                }
+            </style>
+            <ul id="script-content" class="script-content">
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <ul class="scene-change bg-lightCyan fg-white">
+                        <!--<li><a href="#" data-role="button" class="mif-cross fg-darkRed fg-lightRed-hover mr-2"></a><span class="mif-exit"></span> <span>Silente</span></li>-->
+                        <li><a href="#" data-role="button" class="mif-cross fg-darkRed fg-lightRed-hover mr-2"></a><span class="mif-exit"></span> <span>Hardy Potter</span></li>
+                        <li><a href="#" data-role="button" class="mif-cross fg-darkRed fg-lightRed-hover mr-2"></a><span class="mif-arrow-right"></span> <span>Scatola magica</span></li>
+                        <li><a href="#" data-role="button" class="mif-plus fg-darkGreen fg-lightGreen-hover mr-2"></a></li>
+                    </ul>
+                    <span class="c-pointer put-en pos-absolute fg-lightAmber"
+                          data-role="popover"
+                          data-popover-text="<dl><dt>Nicoletta:</dt><dd>Cos'&egrave; la scatola magica?</dd></dl>"
+                          data-popover-position="left"
+                          data-popover-trigger="click"
+                          data-popover-hide="0">
+                        <span class="mif-chat-bubble mif-3x"></span>
+                        <span class="badge inside bg-red fg-white">1</span>
+                    </span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <span class="character bg-lightGrayBlue fg-white border bd-lightGrayBlue">Silente :</span>
+                    <span class="line border bd-lightGrayBlue">Hardy! Accorri! &Egrave; successa una cosa inaudita!</span>
+                    <span class="c-pointer put-wn pos-absolute fg-red"
+                          data-role="popover"
+                          data-popover-text="<span class='fg-red text-medium m-4'>Il personaggio 'Arbus Silente' non &egrave; in scena.</span>"
+                          data-popover-position="right"
+                          data-popover-trigger="click"
+                          data-popover-hide="5000"
+                          data-close-button="false">
+                        <span class="mif-warning mif-2x mr-1"></span>
+                    </span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <span class="character bg-lightGrayBlue fg-white border bd-lightGrayBlue">Hardy Potter :</span>
+                    <span class="line border bd-lightGrayBlue">Oddio, cosa &egrave; successo?</span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <span class="character bg-lightGrayBlue fg-white border bd-lightGrayBlue">Silente :</span>
+                    <span class="line border bd-lightGrayBlue">
+                        Siamo stati usati, Hardy!
+                        Siamo stati usati per la prova di un gestore di copioni per spettacoli!
+                        E, cosa più grave, siamo stati usati senza nemmeno essere in alcuno spettacolo!
+                    </span>
+                    <span class="c-pointer put-wn pos-absolute fg-red"
+                          data-role="popover"
+                          data-popover-text="<span class='fg-red text-medium m-4'>Il personaggio 'Arbus Silente' non &egrave; in scena.</span>"
+                          data-popover-position="right"
+                          data-popover-trigger="click"
+                          data-popover-hide="5000"
+                          data-close-button="false">
+                        <span class="mif-warning mif-2x mr-1"></span>
+                    </span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <span class="audio" style="background-color: rgb(16, 16, 16);">
+                        <span class="label fg-white text-medium ml-2">Effetto "tuono"</span>
+                        <audio data-role="audio" data-src="file.mp3" data-show-loop="false"></audio>
+                    </span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <span class="character bg-lightGrayBlue fg-white border bd-lightGrayBlue">Hardy Potter :</span>
+                    <span class="line border bd-lightGrayBlue">Oooohhh... <span class="fg-gray">(in posa da urlo di Munch)</span> Inaudito!</span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <span class="text bg-lightGrayBlue fg-white">
+                        I due, accortisi di essere parte di un test, smettono di parlare ed escono di scena.
+                    </span>
+                    <span class="c-pointer put-en pos-absolute fg-lightAmber"
+                          data-role="popover"
+                          data-popover-text="<dl>
+                          <dt>Dario:</dt>
+                          <dd>
+                              Qui forse andrebbe ideata un'uscita di scena migliore.
+                              In particolare, il distacco tra la seriet&agrave; di Silente e la leggerezza di Hardy &egrave; eccessivo per un uscita di scena cos&igrave; repentina.
+                          </dd>
+                          <dt>Alessandro:</dt>
+                          <dd>
+                              No, secondo me va bene, caratterizza i personaggi.
+                              Ancora meglio se Hardy andasse via mantenendo per tutto il tempo l'espressione da Urlo di Munch
+                          </dd>
+                          <dt>Dario:</dt>
+                          <dd>
+                              Mmm okay, proviamo.
+                          </dd>
+                          </dl>"
+                          data-popover-position="left"
+                          data-popover-trigger="click"
+                          data-popover-hide="0">
+                        <span class="mif-chat-bubble mif-3x"></span>
+                        <span class="badge inside bg-red fg-white">3</span>
+                    </span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <ul class="scene-change bg-lightCyan fg-white">
+                        <li><a href="#" data-role="button" class="mif-cross fg-darkRed fg-lightRed-hover mr-2"></a><span class="mif-enter"></span> <span>Silente</span></li>
+                        <li><a href="#" data-role="button" class="mif-cross fg-darkRed fg-lightRed-hover mr-2"></a><span class="mif-enter"></span> <span>Hardy Potter</span></li>
+                        <!--<li><a href="#" data-role="button" class="mif-cross fg-darkRed fg-lightRed-hover mr-2"></a><span class="mif-arrow-left"></span> <span>Scatola magica</span></li>-->
+                    </ul>
+                    <span class="c-pointer put-wn pos-absolute fg-red"
+                          data-role="popover"
+                          data-popover-text="<span class='fg-red text-medium m-4'>Il personaggio 'Arbus Silente' non &egrave; in scena.</span>"
+                          data-popover-position="right"
+                          data-popover-trigger="click"
+                          data-popover-hide="5000"
+                          data-close-button="false">
+                        <span class="mif-warning mif-2x mr-1"></span>
+                    </span>
+                </li>
+                <li>
+                    <span class="fg-red">
+                        <span class="mif-warning mif-2x ml-1" style="vertical-align: middle"></span>
+                        <span class="text-medium" style="vertical-align: middle">L'oggetto 'Scatola magica' non esce di scena.</span>
+                    </span>
+                </li>
+                <li>
+                    <div class="mif-more-vert drag-item fg-white pos-absolute c-move"></div>
+                    <button class="image-button outline" data-role="ripple" data-ripple-color="#C0C0C0" style="margin-left: 1px; margin-top: 2px; width: calc(100% - 4px); box-shadow: none">
+                        <span class="mif-plus icon bg-lightGray fg-green"></span>
+                        <span class="caption fg-darkGray">Aggiungi elemento...</span>
+                    </button>
+                </li>
+            </ul>
+        </main>
+        <footer class="m-20 p-20">&nbsp;</footer>
+    </div>
+</main>
+<div id="charms-shortcuts" data-cls-charms="bg-white fg-black" data-role="charms" data-opacity=".5" data-position="bottom">
+    <h5>Scorciatoie</h5>
+    <ul class="group-list horizontal">
+        <li><kbd>Ctrl + F1</kbd> Apri/chiudi questo aiuto</li>
+        <li><kbd>Ctrl + I</kbd> Agguingi elemento</li>
+    </ul>
+</div>
+<script>
+    function btnShortcut_click() {
+        $("#charms-shortcuts").data('charms').toggle();
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+<script>
+    $(function () {
+        $('#script-content').sortable({
+            //axis: "y",
+            handle: ".drag-item",
+            opacity: 0.5,
+            revert: true
+        });
+        /*$('#script-content > li').draggable({
+            handle: ".drag-item",
+            revert: "invalid"
+        });*/
+    });
+</script>
+</body>
+</html>

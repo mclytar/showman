@@ -1,0 +1,26 @@
+<header class="app-bar bg-blue fg-white" data-role="appbar">
+    <a href="/" class="brand no-hover"><b>ShowMan</b></a>
+    <div class="app-bar-container ml-auto">
+        <a href="/shows" class="app-bar-item">
+            Spettacoli
+        </a>
+        <a href="/users" class="app-bar-item fg-lightYellow text-bold">
+            Utenti
+        </a>
+        <a href="#" class="app-bar-item dropdown-toggle text-medium" data-showman-content="username">
+            <?rs var::username ?>
+            <img class="ml-4" data-role="gravatar" data-email="a@b.com" data-default="mp" data-size="48">
+        </a>
+        <ul class="d-menu place-right" data-role="dropdown">
+            <li><a class="text-medium" href="/users/<?rs var::user_id ?>" data-showman-content="username"><?rs var::username ?></a></li>
+            <li><a class="text-medium fg-red" href="#" data-role="button" onclick="logout()">Esci</a></li>
+        </ul>
+    </div>
+    <script>
+        function logout() {
+            HTTP("DELETE", "/auth/session")
+                .success(() => window.location.href = "/")
+                .finish();
+        }
+    </script>
+</header>

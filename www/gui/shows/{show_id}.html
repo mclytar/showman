@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Show Engine -- Spettacolo <?rs var::show_id ?></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+</head>
+<body>
+<?rs template::appbar ?>
+<main class="mt-16 container">
+    <h1>Spettacolo di prova</h1>
+    <ul data-role="listview"
+        data-view="content"
+        data-select-node="true"
+        data-on-node-click="listViewClick">
+        <li data-caption="Scene">
+            <ul>
+                <li class="fg-darkCyan-hover"
+                    data-icon="<span class='mif-open-book fg-cyan'>"
+                    data-caption="Scena 1"
+                    data-content="<span class='fg-lightAmber'><span class='mif-pencil'></span> In corso</span><span class='text-muted'>, Autore 1, Autore 2</span>"
+                    data-href="1"></li>
+                <li class="fg-darkCyan-hover"
+                    data-icon="<span class='mif-open-book fg-cyan'>"
+                    data-caption="Scena 2"
+                    data-content="<span class='fg-red'><span class='mif-warning'></span> Non iniziata</span><span class='text-muted'>, Autore 1, Autore 2</span>"
+                    data-href="2"></li>
+                <li class="fg-darkCyan-hover"
+                    data-icon="<span class='mif-open-book fg-cyan'>"
+                    data-caption="Scena 3"
+                    data-content="<span class='fg-crimson'><span class='mif-blocked'></span> Vuota</span><span class='text-muted'>, Autore 3</span>"
+                    data-href="3"></li>
+                <li class="fg-darkCyan-hover"
+                    data-icon="<span class='mif-open-book fg-cyan'>"
+                    data-caption="Scena 4"
+                    data-content="<span class='fg-lime'><span class='mif-spell-check'></span> Da convalidare</span><span class='text-muted'>, Autore 1, Autore 2</span>"
+                    data-href="4"></li>
+                <li class="fg-darkCyan-hover"
+                    data-icon="<span class='mif-open-book fg-cyan'>"
+                    data-caption="Scena 5"
+                    data-content="<span class='fg-emerald'><span class='mif-checkmark'></span> Completa</span><span class='text-muted'>, Autore 1, Autore 2</span>"
+                    data-href="5"></li>
+            </ul>
+        </li>
+        <li data-caption="Riferimenti">
+            <ul>
+                <li class="fg-darkGreen-hover"
+                    data-icon="<span class='mif-users fg-green'>"
+                    data-caption="Personaggi"
+                    data-content="<span class='text-muted'>Nessun commento</span>"
+                    data-href="characters"></li>
+                <li class="fg-darkGreen-hover"
+                    data-icon="<span class='mif-music fg-green'>"
+                    data-caption="Musica"
+                    data-content="<span class='text-muted'>Nessun commento</span>"
+                    data-href="music"></li>
+                <li class="fg-darkGreen-hover"
+                    data-icon="<span class='mif-apps fg-green'>"
+                    data-caption="Oggetti di scena"
+                    data-content="<span class='text-muted'>Nessun commento</span>"
+                    data-href="scene-items"></li>
+            </ul>
+        </li>
+        <li data-caption="Amministrazione">
+            <ul>
+                <li class="fg-darkAmber-hover"
+                    data-icon="<span class='mif-security fg-amber'>"
+                    data-caption="Partecipanti"
+                    data-content="<span class='text-muted'>Nessun commento</span>"
+                    data-href="people"></li>
+                <li class="fg-darkCrimson-hover"
+                    data-icon="<span class='mif-cog fg-crimson'>"
+                    data-caption="Gestione"
+                    data-content="<span class='text-muted'>Nessun commento</span>"
+                    data-href="administration"></li>
+            </ul>
+        </li>
+    </ul>
+    <script>
+        function listViewClick(node, listView) {
+            let item = $(node).attr('data-href');
+            window.location.href = `/shows/<?rs var::show_id ?>/${item}`;
+        }
+    </script>
+</main>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+</body>
+</html>

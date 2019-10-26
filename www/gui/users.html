@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ShowMan</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+    <script src="js/lib.js"></script>
+</head>
+<body>
+<?rs template::appbar ?>
+<main class="mt-16 container-fluid">
+    <h1>Utenti</h1>
+    <div data-role="accordion" data-one-frame="false" data-show-active="true" data-toggle-element="">
+        <div class="frame">
+            <div class="heading">Filtri</div>
+            <div class="content">
+                <ul class="group-list">
+                    <li><input id="chk-maintainer" type="checkbox" data-role="checkbox" data-caption="Maintainer" data-cls-caption="fg-violet text-medium" checked onClick="fillList()"></li>
+                    <li><input id="chk-admin" type="checkbox" data-role="checkbox" data-caption="Amministratori" data-cls-caption="fg-red text-medium" checked onClick="fillList()"></li>
+                    <li><input id="chk-organizer" type="checkbox" data-role="checkbox" data-caption="Organizzatori" data-cls-caption="fg-amber text-medium" checked onClick="fillList()"></li>
+                    <li><input id="chk-user" type="checkbox" data-role="checkbox" data-caption="Utenti standard" data-cls-caption="fg-black text-medium" checked onClick="fillList()"></li>
+                    <li><input id="chk-pending" type="checkbox" data-role="checkbox" data-caption="In attesa di approvazione" data-cls-caption="fg-darkGray text-medium " onClick="fillList()"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <style>
+        #users-list a {
+            display: none;
+        }
+
+        #users-list li:hover a, #users-list li.current-select a {
+            display: inline-block;
+        }
+    </style>
+    <ul id="users-list" data-role="listview" data-view="content" data-select-node="false">
+    </ul>
+    <div class="d-none"></div>
+    <ul id="ctxmnu-users-list" class="d-menu context pos-fixed" data-role="dropdown" data-toggle-element="#ctxmnutrig-users-list">
+        <li><a href="#"><span class="mif-play icon"></span> Vai all'utente</a></li>
+        <li class="divider"></li>
+        <li><a href="#"><span class="mif-security icon"></span> Modifica ruolo</a></li>
+        <li><a href="#"><span class="mif-bin icon"></span> Elimina</a></li>
+    </ul>
+    <div id="dlg-edit-name" class="dialog" data-role="dialog">
+        <div class="dialog-title"><span class="mif-security icon"></span> Modifica ruolo di <span class="fill-username"></span></div>
+        <div class="dialog-content">
+            <select>
+                <option>Utente</option>
+                <option>Amministratore</option>
+                <option>Organizzatore</option>
+            </select>
+        </div>
+        <div class="dialog-actions">
+            <button class="button js-dialog-close">Annulla</button>
+            <button class="button js-dialog-close primary">Conferma</button>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+<script>
+    let role_list = {
+        'maintainer': ['fg-violet', 'Maintainer'],
+        'admin': ['fg-red', 'Amministratore'],
+        'organizer': ['fg-amber', 'Organizzatore'],
+        'user': ['fg-black', 'Utente'],
+        'pending': ['fg-darkGray', 'In attesa di approvazione']
+    };
+    let user_list = [];
+
+    function fillList() {
+        let $list = $('#users-list');
+        $list.empty();
+
+        let user_count = 0;
+
+        for (let user of user_list) {
+            if (!$(`#chk-${user.role}`).data('checkbox').elem.checked) continue;
+
+            user_count++;
+
+            let icon = `<span class='mif-user'></span>`;
+            let caption = `${user.name} ${user.surname} (${user.email})`;
+            let content = `<span class='d-none user-id'>${user.user_id}</span><span class='${role_list[user.role][0]}'>${role_list[user.role][1]}</span>`;
+            $list.data('listview').add(null, {
+                icon: icon,
+                caption: caption,
+                content: content
+            });
+        }
+
+        if (user_count === 0) {
+            $list.data('listview').add(null, {
+                icon: '',
+                caption: `<span class="fg-gray">Nessun utente trovato.</span>`,
+                content: `<span class="fg-gray">Prova a modificare i filtri.</span>`
+            });
+        }
+    }
+
+    function updateList() {
+        let activity = startAwaitBox();
+        $.json('/api/users')
+            .then(
+                function (response) {
+                    user_list = response;
+                    fillList();
+                    Metro.activity.close(activity);
+                }, function (xhr) {
+                    Metro.activity.close(activity);
+                    Metro.toast.create("Errore nella lettura degli utenti", null, null, null, {
+                        timeout: 4000,
+                        distance: 80,
+                        showTop: true,
+                        clsToast: 'alert'
+                    });
+                }
+            )
+    }
+
+    function startAwaitBox() {
+        return Metro.activity.open({
+            type: 'cycle',
+            overlayColor: '#FFF',
+            overlayAlpha: .5,
+            text: `<div class="mt-2 text-small">Attendi...</div>`
+        });
+    }
+
+    $(() => {
+        updateList();
+        document.oncontextmenu = function(e) {
+            e.preventDefault();
+            return false;
+        };
+        $('#users-list')[0].oncontextmenu = function(e) {
+            let $menu = $('#ctxmnu-users-list');
+            $menu.hide();
+
+            let $item = $(e.target).parents('li');
+            if ($item[0] === undefined) return;
+            $item[0].click();
+            let user_id = $item.find('span.d-none.user-id').text();
+            $menu.find('a:first-child').attr('href', `/users/${user_id}`);
+
+            $menu.data('dropdown').open();
+            $menu.css({
+                left: e.clientX,
+                top: e.clientY,
+                'z-index': 1000
+            });
+            return false;
+        };
+    })
+</script>
+</body>
+</html>

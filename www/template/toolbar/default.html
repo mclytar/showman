@@ -1,0 +1,123 @@
+<nav data-role="ribbonmenu" style="flex: 0 0;">
+    <ul class="tabs-holder">
+        <li><a href="#section-file">File</a></li>
+        <li><a href="#section-edit">Modifica</a></li>
+        <li><a href="#section-view">Visualizza</a></li>
+        <li><a href="#section-tools">Strumenti</a></li>
+    </ul>
+    <div class="content-holder">
+        <!-- FILE -->
+        <div class="section" id="section-file">
+            <div class="group">
+                <button class="ribbon-button">
+                    <span class="icon"><span class="mif-pencil"></span></span>
+                    <span class="caption">Modifica</span>
+                </button>
+                <button class="ribbon-button disabled" hidden>
+                    <span class="icon"><span class="mif-checkmark"></span></span>
+                    <span class="caption">Conferma</span>
+                </button>
+                <button class="ribbon-button disabled" hidden>
+                    <span class="icon"><span class="mif-cross"></span></span>
+                    <span class="caption">Annulla</span>
+                </button>
+                <span class="title">Scrittura</span>
+            </div>
+            <div class="group">
+                <button class="ribbon-button">
+                    <span class="icon"><span class="mif-file-upload"></span></span>
+                    <span class="caption">Importa</span>
+                </button>
+                <button class="ribbon-button" disabled>
+                    <span class="icon"><span class="mif-file-download"></span></span>
+                    <span class="caption">Esporta</span>
+                </button>
+                <span class="title">Copione</span>
+            </div>
+        </div>
+        <!-- EDIT -->
+        <div class="section" id="section-edit">
+            <div class="group">
+                <button class="ribbon-button">
+                    <span class="icon"><span class="mif-undo"></span></span>
+                    <span class="caption">Annulla</span>
+                </button>
+                <button class="ribbon-button" disabled>
+                    <span class="icon"><span class="mif-redo"></span></span>
+                    <span class="caption">Ripeti</span>
+                </button>
+            </div>
+            <div class="group">
+                <button class="ribbon-button">
+                    <span class="icon"><span class="mif-cut"></span></span>
+                    <span class="caption">Taglia</span>
+                </button>
+                <button class="ribbon-button" disabled>
+                    <span class="icon"><span class="mif-copy"></span></span>
+                    <span class="caption">Copia</span>
+                </button>
+                <button class="ribbon-button" disabled>
+                    <span class="icon"><span class="mif-paste"></span></span>
+                    <span class="caption">Incolla</span>
+                </button>
+            </div>
+        </div>
+        <!-- VIEW -->
+        <div class="section" id="section-view">
+            <div class="group">
+
+                <div data-role="buttonsGroup" data-cls-active="active">
+                    <button class="ribbon-button">
+                        <span class="icon">
+                            <span class="mif-vertical-align-top"></span>
+                        </span>
+                        <span class="caption">Top</span>
+                    </button>
+                    <button class="ribbon-button">
+                        <span class="icon">
+                            <span class="mif-vertical-align-center"></span>
+                        </span>
+                        <span class="caption">Center</span>
+                    </button>
+                    <button class="ribbon-button">
+                        <span class="icon">
+                            <span class="mif-vertical-align-bottom"></span>
+                        </span>
+                        <span class="caption">Bottom</span>
+                    </button>
+                </div>
+
+                <span class="title">Role group</span>
+            </div>
+            <div class="group">
+                <div class="ribbon-toggle-group button-group" data-mode="multi" style="width: 192px">
+                    <button class="ribbon-icon-button" data-hotkey="ctrl+f1" onclick="btnShortcut_click()">
+                        <span class="icon"><span class="mif-keyboard"></span></span>
+                        <span class="caption">Scorciatoie</span>
+                    </button>
+                    <button class="ribbon-icon-button">
+                        <span class="icon"><span class="mif-keyboard"></span></span>
+                        <span class="caption">TEST</span>
+                    </button>
+                    <button class="ribbon-icon-button">
+                        <span class="icon"><span class="mif-keyboard"></span></span>
+                        <span class="caption">TEST</span>
+                    </button>
+                    <button class="ribbon-icon-button">
+                        <span class="icon"><span class="mif-keyboard"></span></span>
+                        <span class="caption">TEST</span>
+                    </button>
+                    <button class="ribbon-icon-button">
+                        <span class="icon"><span class="mif-keyboard"></span></span>
+                        <span class="caption">TEST</span>
+                    </button>
+                    <button class="ribbon-icon-button">
+                        <span class="icon"><span class="mif-keyboard"></span></span>
+                        <span class="caption">TEST</span>
+                    </button>
+                </div>
+                <span class="title">Aiuti</span>
+            </div>
+        </div>
+    </div>
+</nav>
