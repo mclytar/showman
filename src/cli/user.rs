@@ -4,6 +4,8 @@ use showman_cli::interface::{CommandResult, Interface};
 use showman_db::{establish_connection, schema};
 
 use diesel::*;
+use showman_db::models::User;
+use showman_db::models::role::Role;
 
 pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
     match command_list.next() {
@@ -29,13 +31,12 @@ pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
                     println!();
                     CommandResult::Ok
                 },
-                "role" => {
+                "list" => {
                     println!();
                     println!("ShowMan server");
-                    println!("user role <role> <identifier>");
+                    println!("user list [<count> [<page>]]");
                     println!();
-                    println!("Set a role for a specific user.");
-                    println!("This option is not implemented yet.");
+                    println!("Show a list of users with their names and their roles.");
                     println!();
                     CommandResult::Ok
                 },
@@ -53,13 +54,35 @@ pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
                     println!();
                     CommandResult::Ok
                 },
+                "set-role" => {
+                    println!();
+                    println!("ShowMan server");
+                    println!("user set-role <identifier> <role>");
+                    println!();
+                    println!("Set a role for a specific user.");
+                    println!();
+                    println!("PARAMETERS:");
+                    println!("    identifier    Unique identifier for the user, i.e. user id or login email.");
+                    println!("    role          New role for the user.");
+                    println!();
+                    println!("The possible roles are:");
+                    println!("    maintainer    A maintainer organizes and manages everything and has access to all areas of the app.");
+                    println!("    admin         An admin organizes and manages shows and users and has access to all areas of the app.");
+                    println!("    organizer     An organizer can create new shows and accept users into their shows.");
+                    println!("    user          An user is a simple user that cannot globally organize anything.");
+                    println!("    banned        A banned user cannot do anything.");
+                    println!();
+                    CommandResult::Ok
+                },
                 "show" => {
                     println!();
                     println!("ShowMan server");
                     println!("user show <identifier>");
                     println!();
                     println!("Show data about a specific user.");
-                    println!("This option is not implemented yet.");
+                    println!();
+                    println!("PARAMETERS:");
+                    println!("    identifier    Unique identifier for the user, i.e. user id or login email.");
                     println!();
                     CommandResult::Ok
                 }
@@ -80,11 +103,12 @@ pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
             println!("Manage users; for details, see the list of available 'user' commands.");
             println!();
             println!("Here is a list of possible showman 'user' commands:");
-            println!("    create    Create a new user");
-            println!("    delete    Delete an existing user");
-            println!("    set-name  Set a name for a specific user");
-            println!("    set-role  Set a role for a specific user");
-            println!("    show      Show data about a specific user");
+            println!("    create      Create a new user");
+            println!("    delete      Delete an existing user");
+            println!("    list        Show a list of users with their names and their roles");
+            println!("    set-name    Set a name for a specific user");
+            println!("    set-role    Set a role for a specific user");
+            println!("    show        Show data about a specific user");
             println!();
             println!("See 'help user <command>' for specific help.");
             println!();
@@ -97,9 +121,10 @@ pub fn configure(interface: &mut Interface) {
     interface
         .handle("create", |_| CommandResult::Unimplemented)
         .handle("delete", |_| CommandResult::Unimplemented)
+        .handle("list", list)
         .handle("set-name", set_name)
-        .handle("set-role", |_| CommandResult::Unimplemented)
-        .handle("show", |_| CommandResult::Unimplemented);
+        .handle("set-role", set_role)
+        .handle("show", show);
 }
 
 pub fn set_name(mut cmd_list: SplitWhitespace) -> CommandResult {
@@ -130,6 +155,134 @@ pub fn set_name(mut cmd_list: SplitWhitespace) -> CommandResult {
                     Err(diesel::result::Error::NotFound) => CommandResult::CustomMessage("The specified user does not exist.".to_owned()),
                     Err(_) => CommandResult::CustomMessage("Error while updating the user.".to_owned())
                 }
+            }
+        }
+    } else {
+        CommandResult::Unimplemented
+    }
+}
+
+pub fn list(mut cmd_list: SplitWhitespace) -> CommandResult {
+    let count_str = cmd_list.next();
+    let count = count_str.map(|s| s.parse::<i64>());
+    let page_str = cmd_list.next();
+    let page = page_str.map(|s| s.parse::<i64>());
+    cli_end!(cmd_list);
+
+    let count = match count {
+        None => None,
+        Some(Ok(count)) => Some(count),
+        Some(Err(_)) => return CommandResult::CustomMessage(format!("Expected a number, found '{}'.", count_str.unwrap()))
+    };
+
+    let page = match page {
+        None => None,
+        Some(Ok(page)) => Some(page),
+        Some(Err(_)) => return CommandResult::CustomMessage(format!("Expected a number, found '{}'.", page_str.unwrap()))
+    };
+
+    match establish_connection() {
+        Err(_) => CommandResult::CustomMessage("Error while establishing a connection to the database.".to_owned()),
+        Ok(connection) => {
+            let table: Vec<User> = {
+                use schema::user::dsl;
+
+                let result = match (count, page) {
+                    (Some(count), Some(page)) => dsl::user.limit(count).offset(count * (page - 1)).load(&connection),
+                    (Some(count), None) => dsl::user.limit(count).load(&connection),
+                    (None, None) => dsl::user.load(&connection),
+                    (None, Some(_)) => return CommandResult::CustomMessage(format!("Reached unreachable condition."))
+                };
+
+                match result {
+                    Ok(table) => table,
+                    Err(_) => return CommandResult::CustomMessage("Error retrieving user table.".to_owned())
+                }
+            };
+
+            println!();
+            println!("Displaying {} items.", table.len());
+            println!();
+            println!("User ID   Role          Name                  Surname");
+            println!("--------------------------------------------------------------------");
+            for user in table {
+                println!("{:>7}   {:<12}  {:<20}  {:<20}", user.user_id, user.role.to_string(), &user.name, &user.surname);
+            }
+            println!();
+
+            CommandResult::Ok
+        }
+    }
+}
+
+pub fn set_role(mut cmd_list: SplitWhitespace) -> CommandResult {
+    let identifier = cli_next!(cmd_list, "identifier");
+    let role_str = cli_next!(cmd_list, "role");
+    cli_end!(cmd_list);
+
+    let role = Role::from(role_str);
+
+    if role == Role::Invalid {
+        return CommandResult::CustomMessage(format!("Role '{}' does not exist.", role_str))
+    }
+
+    if let Ok(user_id) = identifier.parse::<u32>() {
+        match establish_connection() {
+            Err(_) => CommandResult::CustomMessage("Error while establishing a connection to the database.".to_owned()),
+            Ok(connection) => {
+                match connection.transaction(|| {
+                    use schema::user::dsl;
+                    diesel::update(
+                        dsl::user.filter(dsl::user_id.eq(user_id))
+                    ).set(
+                        dsl::role.eq(role)
+                    ).execute(&connection)?;
+
+                    Ok(())
+                }) {
+                    Ok(_) => {
+                        println!("\nUser data updated successfully!\n");
+
+                        CommandResult::Ok
+                    },
+                    Err(diesel::result::Error::NotFound) => CommandResult::CustomMessage("The specified user does not exist.".to_owned()),
+                    Err(_) => CommandResult::CustomMessage("Error while updating the user.".to_owned())
+                }
+            }
+        }
+    } else {
+        CommandResult::Unimplemented
+    }
+}
+
+pub fn show(mut cmd_list: SplitWhitespace) -> CommandResult {
+    let identifier = cli_next!(cmd_list, "identifier");
+    cli_end!(cmd_list);
+
+    if let Ok(user_id) = identifier.parse::<u32>() {
+        match establish_connection() {
+            Err(_) => CommandResult::CustomMessage("Error while establishing a connection to the database.".to_owned()),
+            Ok(connection) => {
+                let user: User = {
+                    use schema::user::dsl;
+
+                    match dsl::user.filter(dsl::user_id.eq(user_id))
+                        .first(&connection) {
+                        Ok(user) => user,
+                        Err(diesel::result::Error::NotFound) => return CommandResult::CustomMessage("The specified user does not exist.".to_owned()),
+                        Err(_) => return CommandResult::CustomMessage("Error while updating the user.".to_owned())
+                    }
+                };
+
+                println!();
+                println!("Found!");
+                println!("user id: {}", user.user_id);
+                println!("name: {}", &user.name);
+                println!("surname: {}", &user.surname);
+                println!("role: {}", user.role.to_string());
+                println!();
+
+                CommandResult::Ok
             }
         }
     } else {
