@@ -8,10 +8,21 @@ use crate::preprocessor::settings::Settings;
 pub fn not_found(req: HttpRequest) -> Result<HttpResponse> {
     let mut settings = Settings::new();
 
-    if let Some(claims) = cookie_get_auth!(req) {
-        settings.set_var("username", claims.display());
-        settings.set_var("user_id", &format!("{}", claims.user_id()));
-        settings.set_template("appbar", if claims.role() == Role::Maintainer || claims.role() == Role::Administrator { "admin" } else { "user" });
+    let session_data = req.cookie("auth")
+        .and_then(|c| {
+            use showman_auth_base::session;
+
+            let auth_token = c.value();
+
+            session::update(auth_token)
+                .and_then(|_| session::get(&auth_token))
+                .ok()
+        });
+
+    if let Some(session_data) = session_data {
+        settings.set_var("username", session_data.name());
+        settings.set_var("user_id", &format!("{}", session_data.user_id()));
+        settings.set_template("appbar", if session_data.role() == Role::Maintainer || session_data.role() == Role::Administrator { "admin" } else { "user" });
     }
 
     Ok(preprocessor::err::not_found(&settings)?)
@@ -33,14 +44,14 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
         .route("/shows/{show_id}/{scene_id}",
                reserved_web_page!("shows/{show_id}/{scene_id}.html", show_id:u32, scene_id:u32))
         .route("/users",
-               reserved_web_page!("users.html", (req, claims, settings) => {
-                    if claims.role() != Role::Maintainer && claims.role() != Role::Administrator {
+               reserved_web_page!("users.html", (req, session_data, settings) => {
+                    if session_data.role() != Role::Maintainer && session_data.role() != Role::Administrator {
                         return preprocessor::err::forbidden(&settings);
                     }
                }))
         .route("/users/{id}",
-               reserved_web_page!("users/{user_id}.html", id:u32, (req, claims, settings) => {
-                    if claims.role() != Role::Maintainer && claims.role() != Role::Administrator && claims.user_id() != id {
+               reserved_web_page!("users/{user_id}.html", id: u32, (req, session_data, settings) => {
+                    if session_data.role() != Role::Maintainer && session_data.role() != Role::Administrator && session_data.user_id() != id {
                         return preprocessor::err::forbidden(&settings);
                     }
                }))

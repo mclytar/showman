@@ -29,7 +29,7 @@ pub fn get(_req: HttpRequest) -> HttpResponse {
     HttpResponse::NotImplemented().finish()
 }
 
-pub fn post(_req: HttpRequest, form: web::Form<RegisterForm>) -> HttpResponse {
+pub fn post(form: web::Form<RegisterForm>) -> HttpResponse {
     match form.validate() {
         Ok(_) => (),
         Err(e) => return Error::UnprocessableEntity().json(e).into()

@@ -24,19 +24,14 @@ CREATE TABLE IF NOT EXISTS `Authentication`
 
 CREATE TABLE IF NOT EXISTS `Session`
 (
-    token_id     INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
+    token        VARCHAR(256) NOT NULL UNIQUE,
     user_id      INT UNSIGNED NOT NULL,
-    needs_update BOOLEAN      NOT NULL DEFAULT FALSE,
     expiration   DATETIME     NOT NULL,
-    PRIMARY KEY (token_id),
+    PRIMARY KEY (token),
     FOREIGN KEY (user_id) REFERENCES `User` (user_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
-
-CREATE TRIGGER `SessionNeedsUpdate_User_AfterUpdate_trig`
-    AFTER UPDATE ON `User` FOR EACH ROW
-        UPDATE `Session` SET `needs_update` = TRUE WHERE `user_id` = NEW.user_id;
 
 /*
 CREATE TABLE IF NOT EXISTS `Show` (

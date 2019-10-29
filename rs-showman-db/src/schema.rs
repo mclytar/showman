@@ -9,10 +9,9 @@ table! {
 }
 
 table! {
-    session (token_id) {
-        token_id -> Unsigned<Integer>,
+    session (token) {
+        token -> Varchar,
         user_id -> Unsigned<Integer>,
-        needs_update -> Bool,
         expiration -> Datetime,
     }
 }
