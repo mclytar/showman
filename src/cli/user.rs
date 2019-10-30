@@ -7,6 +7,8 @@ use diesel::*;
 use showman_db::models::User;
 use showman_db::models::role::Role;
 
+no_arg_sql_function!(last_insert_id, diesel::sql_types::Unsigned<diesel::sql_types::Integer>);
+
 pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
     match command_list.next() {
         Some(command) => {
@@ -14,10 +16,15 @@ pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
                 "create" => {
                     println!();
                     println!("ShowMan server");
-                    println!("user create <parameters>");
+                    println!("user create <email>");
                     println!();
                     println!("Create a new user.");
-                    println!("This option is not implemented yet.");
+                    println!();
+                    println!("PARAMETERS:");
+                    println!("    email         Email of the new user.");
+                    println!();
+                    println!("NOTES:");
+                    println!("A password will be asked for the new user.");
                     println!();
                     CommandResult::Ok
                 },
@@ -37,6 +44,10 @@ pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
                     println!("user list [<count> [<page>]]");
                     println!();
                     println!("Show a list of users with their names and their roles.");
+                    println!();
+                    println!("PARAMETERS:");
+                    println!("    count         Number of users per page.");
+                    println!("    page          Page number.");
                     println!();
                     CommandResult::Ok
                 },
@@ -119,12 +130,66 @@ pub fn help(mut command_list: SplitWhitespace) -> CommandResult {
 
 pub fn configure(interface: &mut Interface) {
     interface
-        .handle("create", |_| CommandResult::Unimplemented)
+        .handle("create", create)
         .handle("delete", |_| CommandResult::Unimplemented)
         .handle("list", list)
         .handle("set-name", set_name)
         .handle("set-role", set_role)
         .handle("show", show);
+}
+
+pub fn create(mut cmd_list: SplitWhitespace) -> CommandResult {
+    use dialoguer::PasswordInput;
+
+    let email = cli_next!(cmd_list, "email");
+    cli_end!(cmd_list);
+
+    let password = match PasswordInput::new()
+        .with_prompt("Insert new password (or set an empty password to cancel the operation)")
+        .with_confirmation("Confirm new password", "Password do not match!")
+        .allow_empty_password(true)
+        .interact() {
+        Ok(password) => password,
+        Err(_) => return CommandResult::CustomMessage("Unexpected I/O error.".to_owned())
+    };
+
+    let password = match bcrypt::hash(&password, 12) {
+        Ok(password) => password,
+        Err(_) => return CommandResult::CustomMessage("Unexpected encryption error.".to_owned())
+    };
+
+    let connection = match establish_connection() {
+        Ok(connection) => connection,
+        Err(_) => return CommandResult::CustomMessage("Can't connect to database.".to_owned())
+    };
+
+    match connection.transaction(|| {
+        let user_id: u32 = {
+            use schema::user::dsl;
+            diesel::insert_into(dsl::user)
+                .values((dsl::name.eq(""), dsl::surname.eq("")))
+                .execute(&connection)?;
+
+            diesel::select(last_insert_id)
+                .first(&connection)?
+        };
+
+        use schema::authentication::dsl;
+        diesel::insert_into(dsl::authentication)
+            .values((dsl::user_id.eq(user_id), dsl::method.eq("password"), dsl::user_data.eq(email), dsl::token.eq(&password)))
+            .execute(&connection)?;
+
+        Ok(user_id)
+    }) {
+        Ok(user_id) => {
+            println!("User {} created!\nUser ID: {}", email, user_id);
+            CommandResult::Ok
+        },
+        Err(diesel::result::Error::DatabaseError(diesel::result::DatabaseErrorKind::UniqueViolation, _)) => {
+            CommandResult::CustomMessage("User already exists.".to_owned())
+        },
+        Err(_) => CommandResult::CustomMessage("Unexpected error.".to_owned())
+    }
 }
 
 pub fn set_name(mut cmd_list: SplitWhitespace) -> CommandResult {
