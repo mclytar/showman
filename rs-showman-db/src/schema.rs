@@ -17,6 +17,16 @@ table! {
 }
 
 table! {
+    show (show_id) {
+        show_id -> Unsigned<Integer>,
+        title -> Varchar,
+        subtitle -> Nullable<Varchar>,
+        description -> Nullable<Text>,
+        creation -> Datetime,
+    }
+}
+
+table! {
     user (user_id) {
         user_id -> Unsigned<Integer>,
         name -> Varchar,
@@ -31,5 +41,6 @@ joinable!(session -> user (user_id));
 allow_tables_to_appear_in_same_query!(
     authentication,
     session,
+    show,
     user,
 );

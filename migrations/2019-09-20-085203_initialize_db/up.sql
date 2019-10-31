@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `Authentication`
     auth_id   INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
     user_id   INT UNSIGNED NOT NULL,
     method    VARCHAR(64)  NOT NULL,
-    user_data VARCHAR(255) NOT NULL,
+    user_data VARCHAR(256) NOT NULL,
     token     TEXT(1024)   NOT NULL,
     PRIMARY KEY (auth_id),
     UNIQUE KEY `AuthenticationUniqueness_key` (`method`, `user_data`),
@@ -31,6 +31,16 @@ CREATE TABLE IF NOT EXISTS `Session`
     FOREIGN KEY (user_id) REFERENCES `User` (user_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `Show`
+(
+    show_id     INT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT,
+    title       VARCHAR(256) NOT NULL,
+    subtitle    VARCHAR(256),
+    description TEXT(5000),
+    creation    DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (show_id)
 );
 
 /*
