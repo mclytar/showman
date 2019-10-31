@@ -4,8 +4,19 @@
     <title>Show Engine -- Spettacolo <?rs var::show_id ?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="LOCALHOST.apps.googleusercontent.com">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+    <script src="https://apis.google.com/js/api:client.js"></script>
+    <meta name="showman-id" content="<?rs var::id ?>">
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
     <style>
+        .googleButton {
+            background-color: #4285F4;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+        }
+
         div.option.some > div.none {
             display: none;
         }
@@ -56,8 +67,8 @@
                     <input name="avatar" type="file" data-role="file" data-button-title="<span class='mif-folder'></span>" data-prepend="Nuova immagine:">
                 </section>
                 <section id="_tabs_auth">
-                    <h2>Indirizzo email e password</h2>
-                    <div id="auth_password" class="option">
+                    <h2>Credenziali d'accesso</h2>
+                    <div id="auth_password" class="option some">
                         <div class="some">
                             <div class="form-group">
                                 <label>Indirizzo email</label>
@@ -72,11 +83,18 @@
                             <button class="button w-100" data-role="ripple">Aggiungi autenticazione con password</button>
                         </div>
                     </div>
-                    <h2>Autenticazione con Google</h2>
-                    <div id="auth_google">
-
+                    <h2>Accesso con Google</h2>
+                    <div id="auth_google" class="option none">
+                        <div class="some">
+                            <button class="button w-100 alert" data-role="ripple">Rimuovi autenticazione con Google</button>
+                        </div>
+                        <div class="none">
+                            <button class="image-button w-100 my-5 drop-shadow fg-white googleButton">
+                                <img class="icon bg-white" src="/google_sign_in.svg" alt="Google" />
+                                <span class="caption">Accedi con Google</span>
+                            </button>
+                        </div>
                     </div>
-                    <h4>Ancora non implementata...</h4>
                 </section>
             </div>
         </div>

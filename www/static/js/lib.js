@@ -175,7 +175,7 @@ function Meta(name) {
     let $tag = $(`meta[name='${name}']`);
 
     if ($tag.length !== 0) {
-        return $tag.val('content');
+        return $tag.attr('content');
     }
 
     return null;
