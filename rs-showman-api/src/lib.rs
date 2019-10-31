@@ -1,3 +1,5 @@
+#[macro_use]
+mod macros;
 pub mod server;
 
 #[macro_use]

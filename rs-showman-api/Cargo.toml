@@ -15,5 +15,6 @@ serde_derive = "1.0.101"
 validator = "0.10.0"
 validator_derive = "0.10.0"
 
+showman-auth-base = { path = "../rs-showman-auth-base" }
 showman-core = { path = "../rs-showman-core" }
 showman-db = { path = "../rs-showman-db" }

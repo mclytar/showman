@@ -1,6 +1,6 @@
 pub mod user_id;
 
-use actix_web::{web, HttpResponse, HttpRequest};
+use actix_web::{web, HttpResponse};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -23,10 +23,6 @@ pub struct RegisterForm {
 #[derive(Serialize)]
 pub struct UserId {
     pub user_id: u32
-}
-
-pub fn get(_req: HttpRequest) -> HttpResponse {
-    HttpResponse::NotImplemented().finish()
 }
 
 pub fn post(form: web::Form<RegisterForm>) -> HttpResponse {
