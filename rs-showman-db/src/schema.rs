@@ -22,6 +22,7 @@ table! {
         title -> Varchar,
         subtitle -> Nullable<Varchar>,
         description -> Nullable<Text>,
+        notes -> Nullable<Varchar>,
         creation -> Datetime,
     }
 }

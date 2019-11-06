@@ -39,19 +39,28 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
                web_page!("register.html"))
         .route("/shows",
                reserved_web_page!("shows.html"))
+        .route("/shows/new",
+               reserved_web_page!("shows/new.html", (req, session_data, settings) => {
+                    let role = session_data.role();
+                    if role != Role::Maintainer && role != Role::Administrator && role != Role::Organizer {
+                        return preprocessor::err::forbidden(&settings);
+                    }
+               }))
         .route("/shows/{show_id}",
                reserved_web_page!("shows/{show_id}.html", show_id:u32))
         .route("/shows/{show_id}/{scene_id}",
                reserved_web_page!("shows/{show_id}/{scene_id}.html", show_id:u32, scene_id:u32))
         .route("/users",
                reserved_web_page!("users.html", (req, session_data, settings) => {
-                    if session_data.role() != Role::Maintainer && session_data.role() != Role::Administrator {
+                    let role = session_data.role();
+                    if role != Role::Maintainer && role != Role::Administrator {
                         return preprocessor::err::forbidden(&settings);
                     }
                }))
         .route("/users/{id}",
                reserved_web_page!("users/{user_id}.html", id: u32, (req, session_data, settings) => {
-                    if session_data.role() != Role::Maintainer && session_data.role() != Role::Administrator && session_data.user_id() != id {
+                    let role = session_data.role();
+                    if role != Role::Maintainer && role != Role::Administrator && session_data.user_id() != id {
                         return preprocessor::err::forbidden(&settings);
                     }
                }))

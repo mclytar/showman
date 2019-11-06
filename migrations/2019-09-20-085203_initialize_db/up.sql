@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `Show`
     title       VARCHAR(256) NOT NULL,
     subtitle    VARCHAR(256),
     description TEXT(5000),
+    notes       VARCHAR(256),
     creation    DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (show_id)
 );

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ShowMan -- Nuovo spettacolo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+</head>
+<body class="w-100 h-100 pos-absolute" style="overflow-y: hidden">
+<?rs template::appbar ?>
+<main class="mt-16 container">
+    <h1>Nuovo spettacolo</h1>
+    <form id="registerData"
+          class="custom-validation"
+          action="javascript:"
+          data-role="validator"
+          data-on-submit="send">
+        <div class="form-group">
+            <label>Titolo</label>
+            <input name="title" type="text" data-role="input" data-validate="required" placeholder="Titolo">
+            <p class="text-small mt-0">Il titolo del nuovo spettacolo.</p>
+        </div>
+        <div class="form-group">
+            <label>Sottotitolo</label>
+            <input name="subtitle" type="text" data-role="input" placeholder="Sottotitolo">
+            <p class="text-small mt-0">Un sottotitolo o una descrizione breve dello spettacolo (ad esempio, il tema principale).</p>
+        </div>
+        <div class="form-group">
+            <label>Descrizione</label>
+            <textarea name="description" data-role="textarea" placeholder="Descrizione" style="height: 12em;"></textarea>
+            <p class="text-small mt-0">Descrizione lunga dello spettacolo. &Egrave; un testo abbastanza libero e pu&ograve; contenere le varie idee per lo sviluppo dello spettacolo.</p>
+        </div>
+        <div class="form-group">
+            <label>Note</label>
+            <input name="notes" type="text" data-role="input" placeholder="Note aggiuntive">
+            <p class="text-small mt-0">Note aggiuntive. Generalmente, un'indicazione che identifica lo spettacolo senza rivelarne il contenuto (ad esempio, 'Natale 2019')</p>
+        </div>
+        <button class="button primary w-100 my-6">Conferma</button>
+    </form>
+</main>
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+<script src="/js/lib.js"></script>
+<script src="/js/shows/new.js"></script>
+</body>
+</html>
