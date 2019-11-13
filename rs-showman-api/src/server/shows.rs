@@ -1,3 +1,5 @@
+pub mod show_id;
+
 use actix_web::{web, HttpResponse, HttpRequest, HttpMessage};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};

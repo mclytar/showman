@@ -4,12 +4,17 @@
     <title>Show Engine -- Spettacolo <?rs var::show_id ?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="showman-show-id" content="<?rs var::show_id ?>">
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
 </head>
 <body class="w-100 h-100 pos-absolute" style="overflow-y: hidden">
 <?rs template::appbar ?>
 <main class="mt-16 container">
-    <h1>Spettacolo di prova</h1>
+    <h1 id="show-title"></h1>
+    <h4 id="show-subtitle"></h4>
+    <p id="show-description"></p>
+    <span id="show-notes" class="fg-gray"></span>
+    <h3 class="mt-8">Contenuti</h3>
     <ul data-role="listview"
         data-view="content"
         data-select-node="true"
@@ -40,6 +45,11 @@
                     data-icon="<span class='mif-open-book fg-cyan'>"
                     data-caption="Scena 5"
                     data-content="<span class='fg-emerald'><span class='mif-checkmark'></span> Completa</span><span class='text-muted'>, Autore 1, Autore 2</span>"
+                    data-href="5"></li>
+                <li class="fg-darkCyan-hover"
+                    data-icon="<span class='mif-plus fg-green'>"
+                    data-caption="Aggiungi scena"
+                    data-content="<span class='text-muted'>Aggiungi una nuova scena</span>"
                     data-href="5"></li>
             </ul>
         </li>
@@ -84,7 +94,8 @@
         }
     </script>
 </main>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+<script src="/js/lib.js"></script>
+<script src="/js/shows/show.js"></script>
 </body>
 </html>
