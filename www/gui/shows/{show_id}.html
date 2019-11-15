@@ -7,18 +7,20 @@
     <meta name="showman-show-id" content="<?rs var::show_id ?>">
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
 </head>
-<body class="w-100 h-100 pos-absolute" style="overflow-y: hidden">
+<body class="w-100 h-100 pos-absolute">
 <?rs template::appbar ?>
-<main class="mt-16 container">
-    <h1 id="show-title"></h1>
-    <h4 id="show-subtitle"></h4>
+<main class="my-16 container">
+    <h1>Gestione spettacolo</h1>
+    <h3 id="show-title"></h3>
+    <h5 id="show-subtitle"></h5>
     <p id="show-description"></p>
-    <span id="show-notes" class="fg-gray"></span>
-    <h3 class="mt-8">Contenuti</h3>
+    <div id="show-notes" class="w-100 my-2 fg-gray"></div>
+    <a href="/shows/<?rs var::show_id ?>/all" class="button w-100">Visualizza</a>
+    <h2 class="mt-8">Contenuti</h2>
     <ul data-role="listview"
         data-view="content"
         data-select-node="true"
-        data-on-node-click="listViewClick">
+        data-on-node-click="get_item">
         <li data-caption="Scene">
             <ul>
                 <li class="fg-darkCyan-hover"
@@ -50,7 +52,7 @@
                     data-icon="<span class='mif-plus fg-green'>"
                     data-caption="Aggiungi scena"
                     data-content="<span class='text-muted'>Aggiungi una nuova scena</span>"
-                    data-href="5"></li>
+                    data-href="new"></li>
             </ul>
         </li>
         <li data-caption="Riferimenti">
@@ -87,12 +89,6 @@
             </ul>
         </li>
     </ul>
-    <script>
-        function listViewClick(node, listView) {
-            let item = $(node).attr('data-href');
-            window.location.href = `/shows/<?rs var::show_id ?>/${item}`;
-        }
-    </script>
 </main>
 <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
 <script src="/js/lib.js"></script>

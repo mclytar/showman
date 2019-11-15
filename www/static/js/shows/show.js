@@ -20,4 +20,12 @@ function ready() {
         .finish();
 }
 
+function get_item(node) {
+    let show_id = Meta('showman-show-id');
+
+    let item = $(node).attr('data-href');
+    console.log(item);
+    window.location.assign(`/shows/${show_id}/${item}`);
+}
+
 $(ready);
