@@ -5,10 +5,14 @@ function send() {
         password: $('#loginData [name="password"]').val()
     };
     HTTP("POST", "/auth/session", data)
-        .success(() => window.location.href = "/")
+        .success(goto_index)
         .error(HTTP.Unauthorized, error_unauthorized)
         .complete(() => UIReady(waiter))
         .finish();
+}
+
+function goto_index() {
+    setTimeout(() => window.location.assign("/"), 10);
 }
 
 function error_unauthorized() {
