@@ -29,15 +29,18 @@ After the [configuration](#configuration), the server can be started simply typi
 ### Configuration
 
 After configuring `diesel`, you should generate two files: `.env` and `pass.key`.
+Moreover, you need an SSL key/cert pair stored in files `key.pem` and `cert.pem`.
 
 #### `.env`
 
 The `.env` file is created manually and contains additional environment variables.
 At the moment, the only needed variable is the database location, thus the file should be similar to the following.
 ```dotenv
+BIND=<address>:<port>
+BIND_SSL=<address>:<port>
 DATABASE_URL=mysql://<user>:<password>@<location>/<db_name>
 ```
-The parameters follow:
+The `DATABASE_URL` parameters are the following:
 - `user` is the database user that can perform the operations;
 - `password` is the password of the above user;
 - `location` is the domain or ip address of the database server;

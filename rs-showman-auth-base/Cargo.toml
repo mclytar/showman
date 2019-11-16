@@ -13,7 +13,7 @@ diesel = { version = "1.4.3", features = ["mysql", "chrono"] }
 hex = "0.4.0"
 jsonwebtoken = "6.0.1"
 lazy_static = "1.4.0"
-ring = "^0.14.4"
+ring = "^0.14"
 serde = "1.0.101"
 serde_derive = "1.0.101"
 
