@@ -1,0 +1,23 @@
+#   RELATIONS
+    Show(ShowId, ShowTitle, ShowDescription)
+
+    Scene(SceneId, SceneTitle, SceneDescription, ShowId)
+	SceneVersion(VersionId, Version, SceneId)
+	FlowItem(FlowItemId, VersionId)
+
+	Character(CharacterId, CharacterName, CharacterDisplayName, UserId, CharacterDescription)
+	Object(ObjectId, ObjectName, ObjectDisplayName, ObjectDescription)
+	Audio(AudioId, AudioName, AudioFile)
+	Music(MusicId, MusicName)
+	MusicPlayer(MusicId, UserId, MusicRole)
+	MusicLyrics(LyricId, MusicId)
+	MusicLyricsLine(LyricId, LyricLine)
+
+	SpeechFlowItem(FlowItemId, CharacterId, SpeechText)
+	AudioFlowItem(FlowItemId, AudioId)
+	MusicFlowItem(FlowItemId, MusicId)
+	DescriptionFlowItem(FlowItemId, SceneText)
+	ObjectMoveFlowItem(FlowItemId, ObjectId, Kind)
+	CharacterMoveFlowItem(FlowItemId, CharacterId, Kind)
+
+	CommentToFlowItem(FlowItemId, UserId, CommentText)

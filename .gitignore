@@ -1,9 +1,4 @@
-/target
-**/*.rs.bk
-
-.idea
+/target/
+.idea/
 
 .env
-cert.pem
-key.pem
-pass.key

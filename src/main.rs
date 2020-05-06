@@ -1,80 +1,40 @@
-extern crate showman;
-
-use std::io::{stdin, stdout, Write};
-
-use actix_rt::System;
-use dotenv::dotenv;
-
-use showman_cli::interface::{Interface, CommandResult, InterfaceNode};
-use showman_gui::preprocessor;
-
-fn main() {
-    let mut command_line_interface = Interface::new();
-    let _system = System::new("showman");
-
-    dotenv().expect("Cannot load environment variables.");
-    preprocessor::update("./www/template/");
-
-    println!("Starting server...");
-    showman::start();
-    println!("Server is running!");
-    println!("Write a command or type 'help' for a list of commands.");
-
-    command_line_interface
-        .handle("update", |_| {
-            print!("Updating definitions... ");
-            preprocessor::update("./www/template/");
-            dotenv().expect("Cannot load environment variables");
-            println!("OK!");
-
-            CommandResult::Ok
-        })
-        .handle("reload", |_| {
-            print!("Stopping server... ");
-            showman::stop(true);
-            println!("OK!");
-            print!("Reloading definitions... ");
-            preprocessor::update("./www/template/");
-            dotenv().expect("Cannot load environment variables");
-            println!("OK!");
-            print!("Restarting server... ");
-            showman::start();
-            println!("OK!");
-
-            CommandResult::Ok
-        })
-        .handle("stop", |_| {
-
-            print!("Stopping server... ");
-            showman::stop(true);
-            println!("OK!");
-
-            CommandResult::Stop
-        });
-
-    command_line_interface.configure(showman::cli::configure);
-
-    loop {
-        print!("> ");
-
-        stdout().flush().unwrap();
-        let mut input = String::new();
-        stdin().read_line(&mut input).unwrap();
-
-        let command = input.trim();
-        if command == "" { continue; }
-        let tokens = command.split_whitespace();
-
-        match command_line_interface.parse(tokens) {
-            CommandResult::Ok => { /* Do nothing... */},
-            CommandResult::Stop => { break; },
-            CommandResult::NotFound => { println!("\nCommand '{}' does not exist. To see a list of available commands, type 'help'.\n", command); },
-            CommandResult::Incomplete => { println!("\nSome parameter is missing. To see a list of available parameters, type 'help {}'.\n", command); }
-            CommandResult::CustomMessage(msg) => { println!("\n{}\n", &msg); },
-            CommandResult::TooManyArguments => { println!("\nToo many arguments."); },
-            CommandResult::Unimplemented => { println!("\nThis functionality is currently not implemented.\n"); }
-        }
+macro_rules! env_or {
+    ($name:literal, $default:literal) => {
+        std::env::var($name).unwrap_or($default.to_owned())
     }
+}
 
-    println!("Goodbye!");
+use actix_cors::Cors;
+use actix_web::{guard::Host, web, App, HttpServer};
+use diesel::mysql::MysqlConnection;
+use diesel::r2d2::{self, ConnectionManager};
+
+#[actix_rt::main]
+async fn main() -> std::io::Result<()> {
+    dotenv::dotenv()
+        .expect("Unable to load environment variables.");
+
+    let db_url = std::env::var("DATABASE_URL")
+        .expect("No database url specified");
+    let db_cm = ConnectionManager::<MysqlConnection>::new(db_url);
+    let db_pool = r2d2::Pool::builder()
+        .build(db_cm)
+        .expect("Failed to create DB connection pool");
+
+    HttpServer::new(move || App::new()
+        .data(db_pool.clone())
+        .service(
+            web::scope("/")
+                .wrap(
+                    Cors::new()
+                        .supports_credentials()
+                        .finish()
+                )
+                .guard(Host(env_or!("API_HOSTNAME", "api.localhost")))
+                .configure(showman_api::setup)
+        )
+    )
+        .bind("0.0.0.0:80")?
+        .run()
+        .await
 }
