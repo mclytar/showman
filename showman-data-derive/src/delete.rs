@@ -14,8 +14,8 @@ pub fn impl_derive_delete(context: Context) -> TokenStream {
                 diesel::delete(#table.filter(#id.eq(id)))
                     .execute(dbc)
                     .map_err(|e: DBError| match e {
-                        DBError::NotFound => HttpResponse::NotFound().finish(),
-                        _ => HttpResponse::InternalServerError().body(format!("{}", e))
+                        DBError::NotFound => actix_web::error::ErrorNotFound(""),
+                        _ => actix_web::error::ErrorInternalServerError(format!("{}", e))
                     })?;
 
                 Ok(())

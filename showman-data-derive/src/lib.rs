@@ -29,7 +29,7 @@ pub fn derive_create(input: TokenStream) -> TokenStream {
     create::impl_derive_create(ctxt)
 }
 
-#[proc_macro_derive(CreateChild, attributes(extern_column, parent_id, table_name))]
+#[proc_macro_derive(CreateChild, attributes(extern_column, parent_resource_name, parent_id, table_name))]
 pub fn derive_create_child(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let ctxt = context!(input);

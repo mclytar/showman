@@ -20,7 +20,7 @@ pub fn impl_derive_create(context: Context) -> TokenStream {
                     let id = diesel::select(last_insert_id)
                         .first(dbc)?;
                     Ok(id)
-                }).map_err(|e: DBError| HttpResponse::InternalServerError().body(format!("{}", e)))?;
+                }).map_err(|e: DBError| actix_web::error::ErrorInternalServerError(format!("{}", e)))?;
 
                 Ok(id)
             }
@@ -31,8 +31,14 @@ pub fn impl_derive_create(context: Context) -> TokenStream {
 }
 
 pub fn impl_derive_create_child(context: Context) -> TokenStream {
-    let Context { name, data, table, parent_id, extern_column, .. } = context;
+    let Context { name, data, table, parent_id, parent_resource_name, extern_column, .. } = context;
 
+    let parent_resource_name = if let Some(name) = parent_resource_name {
+        name
+    } else {
+        return syn::Error::new(Span::call_site(), "Attribute `parent_resource_name` is mandatory in order to implement trait `CreateChild`.")
+            .to_compile_error().into()
+    };
     let parent_id = if let Some(id) = parent_id {
         id
     } else {
@@ -89,12 +95,16 @@ pub fn impl_derive_create_child(context: Context) -> TokenStream {
 
                     Ok(result)
                 }).map_err(|e: DBError| match e {
-                    DBError::NotFound => HttpResponse::NotFound().finish(),
-                    DBError::DatabaseError(DBErrorKind::ForeignKeyViolation, _) => HttpResponse::NotFound().finish(),
-                    _ => HttpResponse::InternalServerError().body(format!("{}", e))
+                    DBError::NotFound => actix_web::error::ErrorNotFound(""),
+                    DBError::DatabaseError(DBErrorKind::ForeignKeyViolation, _) => actix_web::error::ErrorNotFound(""),
+                    _ => actix_web::error::ErrorInternalServerError(format!("{}", e))
                 })?;
 
                 Ok(id)
+            }
+
+            fn parent_resource_name() -> &'static str {
+                #parent_resource_name
             }
         }
     };

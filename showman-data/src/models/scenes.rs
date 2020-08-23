@@ -7,6 +7,7 @@ use crate::schema::scene;
 /// Creation form for `Scene` table.
 #[derive(CreateChild, Deserialize)]
 #[table_name = "scene"]
+#[parent_resource_name="show"]
 #[parent_id = "show_id"]
 #[extern_column(number: i32 <- compute_number)]
 pub struct SceneForm {
@@ -60,7 +61,7 @@ impl Update for SceneUpdateOrderForm {
             .collect();
         let scene_ids = match scene_ids {
             Ok(ids) => ids,
-            Err(_) => return Err(HttpResponse::BadRequest().finish())
+            Err(_) => return Err(error::ErrorBadRequest(""))
         };
 
         dbc.transaction(|| {
@@ -89,9 +90,9 @@ impl Update for SceneUpdateOrderForm {
 
             Ok(())
         }).map_err(|e: DBError| match e {
-            DBError::NotFound => HttpResponse::NotFound().finish(),
-            DBError::RollbackTransaction => HttpResponse::BadRequest().finish(),
-            _ => HttpResponse::InternalServerError().body(format!("{}", e))
+            DBError::NotFound => error::ErrorNotFound(""),
+            DBError::RollbackTransaction => error::ErrorBadRequest(""),
+            _ => error::ErrorInternalServerError(e.to_string())
         })?;
 
         Ok(())

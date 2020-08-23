@@ -1,0 +1,66 @@
+{% extends "__page.html" %}
+{% block main %}
+    <div class="row h-100 w-100 m-0">
+        <aside id="side-nav" class="cell-md bg-white">
+            <nav class="container border bd-cyan">
+                <h4>Spettacoli</h4>
+                <ul class="custom-list-marker text-medium">
+                    {% if shows | length > 0 %}{% for show in shows %}
+                    <li data-marker="&#x1f4dc;">&nbsp; <a href="/shows/{{ show.show_id }}">{{ show.title }}</a></li>
+                    {% endfor %}{% else %}
+                    <li data-marker="">  <i class="fg-gray">Ancora nessuno spettacolo...</i></li>
+                    {% endif %}
+                </ul>
+                <button class="image-button success mb-2 w-100" onclick="btnCreateShow_click()">
+                    <span class="icon mif-add"></span>
+                    <span class="caption">Nuovo spettacolo...</span>
+                </button>
+            </nav>
+        </aside>
+        <main class="cell-md border bd-gray">
+            <ul class="feed-list">
+                {{ components::feeditem(avatar="https://picsum.photos/48/48/?random", title="<strong>mclytar</strong> created an item.", contents="This element") }}
+                {{ components::feeditem(avatar="https://picsum.photos/48/48/?random", title="<strong>mclytar</strong> created this web-app.", contents="Go to the <a href='/'>app</a>") }}
+            </ul>
+        </main>
+    </div>
+    <script>
+    function frmCreateShow_submit() {
+        let valid = Metro.validator.validate($(frmCreateShow.title));
+        if (valid) {
+            m4q.global();
+            $.post("http://{{ env.api_hostname }}/shows", frmCreateShow, {
+                onSuccess: function(e, xhr) {
+                    let location = xhr.getResponseHeader("Location");
+                    console.log(location);
+                    window.location.href = location;
+                }
+            });
+        }
+    }
+    function btnCreateShow_click() {
+        let title_input = `<div class="form-group"><label>Titolo</label><input name="title" type="text" data-validate="required"/><span class="invalid_feedback">Campo obbligatorio</span></div>`;
+        let description = `<div class="form-group"><label>Descrizione</label><input name="description" type="text" /></div>`;
+
+        let dlg = Metro.dialog.create({
+            title: "Nuovo spettacolo",
+            content: `<form data-role="validator" id="frmCreateShow" class="custom-validation" novalidate>${title_input}${description}</form>`,
+            actionsAlign: "right",
+            actions: [
+                {
+                    caption: "Annulla",
+                    cls: "js-dialog-close"
+                },
+                {
+                    caption: "Crea",
+                    cls: "primary",
+                    onclick: frmCreateShow_submit
+                }
+            ],
+            onShow: function () {
+                frmCreateShow.title.focus()
+            }
+        });
+    }
+    </script>
+{% endblock main %}

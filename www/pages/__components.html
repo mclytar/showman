@@ -1,0 +1,100 @@
+{% macro appbar(username=false) %}
+<div class="container-fluid pos-relative bg-darkBrown" data-role="appbar" data-expand-point="md">
+    <a href="/" class="brand no-hover fg-lightBrown fg-white-hover order-1"><span class="mif-books mif-2x"></span></a>
+    <div class="app-bar-item d-none d-flex-md order-2">
+        <input type="text" placeholder="Cerca" class="app-bar-input app-bar-search bg-lightBrown fg-light" style="width: 200px;">
+    </div>
+
+    {% if username %}
+        <div class="app-bar-container ml-auto order-3 order-md-4">
+            <a href="#" class="app-bar-item fg-lightBrown fg-white-hover"><span class="mif-bell"></span></a>
+
+            <div class="app-bar-container">
+                <a class="app-bar-item dropdown-toggle marker-light pl-1 pr-5" href="#">
+                    <img class="rounded" data-role="gravatar" data-email="sergey@pimenov.com.ua" data-size="25">
+                </a>
+                <ul class="v-menu place-right" data-role="dropdown">
+                    <li><a href=""><strong>{{ username }}</strong></a></li>
+                    <li><a href="">I tuoi spettacoli</a></li>
+                    <li class="divider"></li>
+                    <li><a href=""><span class="mif-help icon"></span> Informazioni e aiuto</a></li>
+                    <li><a href=""><span class="mif-cog icon"></span> Impostazioni</a></li>
+                    <li><a href=""><span class="mif-exit icon"></span> Disconnettiti</a></li>
+                </ul>
+            </div>
+        </div>
+    {% else %}
+        <div class="app-bar-container ml-auto order-3 order-md-4">
+        <a href="/login" class="app-bar-item order-3 fg-lightBrown fg-white-hover">Accedi</a>
+        </div>
+    {% endif %}
+</div>
+{% endmacro appbar %}
+
+{% macro feeditem(avatar, title, contents, time="") %}
+<li>
+    <div class="avatar"><img class="rounded" src="{{ avatar }}"></div>
+    <span class="label">{{ title }}<small class="fg-gray">{{ time }}</small></span>
+    <div class="second-label bg-white border border-radius-4 bd-gray p-3">{{ contents }}</div>
+</li>
+{% endmacro feeditem %}
+
+{% macro scene(scene_id, scene_title, scene_description=false, authors=false) %}
+    <div class="frame bg-white">
+        <div class="heading">
+            <div class="row m-0 p-0">
+                <div class="cell m-0 p-0"><span class="mif-file-text"></span> {{ scene_title }}</div>
+                <div class="cell m-0 p-0">
+                    {% if authors %}{% for author in authors %}
+                    <a href="/users/{{ author.user_id }}"><strong>{{ authors.name }}</strong></a>
+                    {% endfor %}{% else %}
+                    <i class="fg-gray">Nessun autore...</i>
+                    {% endif %}
+                </div>
+                <div class="cell m-0 p-0">
+                    <i class="fg-gray">Nessuno stato...</i>
+                </div>
+                <div class="stub m-0 p-0" style="width: 32px">
+                    <span class="mif-more-vert drag-handle" style="display: none"></span>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <h6>Descrizione</h6>
+            {% if scene_description %}
+            {{ scene_description }}
+            {% else %}
+            <i class="fg-gray">Nessuna descrizione...</i>
+            {% endif %}
+            <hr>
+            <div class="text-right mb-2">
+                <a class="image-button" data-role="button" href="/scenes/{{ scene_id }}/script">
+                    <span class="mif-file-text icon"></span>
+                    <span class="caption fg-black">Visualizza copione</span>
+                </a>
+                <a class="image-button" data-role="button" href="/scenes/{{ scene_id }}/metadata">
+                    <span class="mif-pencil icon"></span>
+                    <span class="caption fg-black">Modifica informazioni</span>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endmacro scene %}
+
+{% macro character(character_name, actor_id=false, actor_name=false, character_description="") %}
+<div class="frame">
+    <div class="heading">
+        <div class="row m-0 p-0">
+            <div class="cell m-0 p-0"><span class="mif-user"></span> {{ character_name }}</div>
+            {% if actor_id %}
+            <div class="cell m-0 p-0"><a href="/users/{{ actor_id }}"><strong>{{ actor_name }}</strong></a></div>
+            {% else %}
+            <div class="cell m-0 p-0"><i class="fg-gray">Nessun attore</i></div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="content">
+        <div class="p-2">{{ character_description }}</div>
+    </div>
+</div>
+{% endmacro character %}

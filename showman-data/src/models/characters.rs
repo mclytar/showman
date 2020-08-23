@@ -5,6 +5,7 @@ use crate::schema::character;
 /// Creation form for `Character` table.
 #[derive(CreateChild, Deserialize)]
 #[table_name = "character"]
+#[parent_resource_name="show"]
 #[parent_id = "show_id"]
 pub struct CharacterForm {
     pub name: String,

@@ -5,6 +5,7 @@ use crate::schema::prop;
 /// Creation form for `Prop` table.
 #[derive(CreateChild, Deserialize)]
 #[table_name = "prop"]
+#[parent_resource_name="show"]
 #[parent_id = "show_id"]
 pub struct PropForm {
     pub name: String,

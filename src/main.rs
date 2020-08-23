@@ -27,11 +27,27 @@ async fn main() -> std::io::Result<()> {
             web::scope("/")
                 .wrap(
                     Cors::new()
+                        .expose_headers(vec!["Location"])
                         .supports_credentials()
                         .finish()
                 )
                 .guard(Host(env_or!("API_HOSTNAME", "api.localhost")))
                 .configure(showman_api::setup)
+        )
+        .service(
+            web::scope("/")
+                .wrap(
+                    Cors::new()
+                        .supports_credentials()
+                        .finish()
+                )
+                .guard(Host(env_or!("AUTH_HOSTNAME", "auth.localhost")))
+                .configure(showman_auth::setup)
+        )
+        .service(
+            web::scope("/")
+                .guard(Host(env_or!("HOSTNAME", "localhost")))
+                .configure(showman_gui::setup)
         )
     )
         .bind("0.0.0.0:80")?

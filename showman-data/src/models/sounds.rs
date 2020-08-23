@@ -5,6 +5,7 @@ use crate::schema::sound;
 /// Creation form for `Sound` table.
 #[derive(CreateChild, Deserialize)]
 #[table_name = "sound"]
+#[parent_resource_name="show"]
 #[parent_id = "show_id"]
 pub struct SoundForm {
     pub name: String,

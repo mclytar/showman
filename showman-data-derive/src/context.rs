@@ -7,6 +7,7 @@ pub struct Context {
     pub data: Data,
     pub table: Ident,
     pub id: Ident,
+    pub parent_resource_name: Option<String>,
     pub parent_id: Option<Ident>,
     pub order_by: Vec<Ident>,
     pub extern_column: Vec<(Ident, (Ident, Ident))>
@@ -85,6 +86,7 @@ impl Context {
         let order_by: Option<String> = get_attribute_value_string(attributes, "order_by")?;
         let data = data.to_owned();
         let extern_column = parse_extern_column(attributes)?;
+        let parent_resource_name = get_attribute_value_string(attributes, "parent_resource_name")?;
 
         let name = name.to_owned();
         let table = Ident::new(&table, Span::call_site());
@@ -100,6 +102,6 @@ impl Context {
             vec![]
         };
 
-        Ok(Context { name, data, table, id, parent_id, order_by, extern_column })
+        Ok(Context { name, data, table, id, parent_id, parent_resource_name, order_by, extern_column })
     }
 }

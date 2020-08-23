@@ -1,14 +1,4 @@
 //pub mod shows;
-
-macro_rules! try_dbc {
-    ($dbp:expr) => {
-        match $dbp.get() {
-            Ok(dbc) => dbc,
-            Err(_) => return HttpResponse::ServiceUnavailable().finish()
-        }
-    }
-}
-
 macro_rules! allow {
     ($($ident:ident),*) => {
         || HttpResponse::MethodNotAllowed()
@@ -19,6 +9,10 @@ macro_rules! allow {
 
 pub(crate) mod self_prelude {
     pub use actix_web::{
+        error::{
+            self,
+            Result
+        },
         web::{
             self,
             Data,
@@ -62,60 +56,71 @@ pub fn setup(cfg: &mut web::ServiceConfig) {
 // ----------------------------------------------------------------
 // `Show`
 // ----------------------------------------------------------------
-pub fn get_shows(dbp: Data<DbPool>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).load_all::<ShowData>()
+async fn get_shows(dbp: Data<DbPool>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).load_all::<ShowData>().await
 }
 
-pub fn post_shows(dbp: Data<DbPool>, Form(data): Form<ShowForm>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).create(data, |r| format!("/shows/{}", r))
+async fn post_shows(dbp: Data<DbPool>, Form(data): Form<ShowForm>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).create(data, |r| format!("/shows/{}", r)).await
 }
 
-pub fn get_show_by_id(dbp: Data<DbPool>, id: Path<u32>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).load::<ShowData>(id.into_inner())
+async fn get_show_by_id(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).load::<ShowData>(id.into_inner()).await
 }
 
-pub fn patch_show_by_id(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<ShowUpdateForm>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).update(data, id.into_inner())
+async fn patch_show_by_id(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<ShowUpdateForm>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).update(data, id.into_inner()).await
 }
 
-pub fn delete_show_by_id(dbp: Data<DbPool>, id: Path<u32>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).delete::<ShowData>(id.into_inner())
+async fn delete_show_by_id(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).delete::<ShowData>(id.into_inner()).await
 }
 
 // ----------------------------------------------------------------
 // `Scene`
 // ----------------------------------------------------------------
-pub fn get_scene_by_id(dbp: Data<DbPool>, id: Path<u32>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).load::<SceneData>(id.into_inner())
+async fn get_scene_by_id(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).load::<SceneData>(id.into_inner()).await
 }
 
-pub fn patch_scene_by_id(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<SceneUpdateForm>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).update(data, id.into_inner())
+async fn patch_scene_by_id(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<SceneUpdateForm>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).update(data, id.into_inner()).await
 }
 
-pub fn delete_scene_by_id(dbp: Data<DbPool>, id: Path<u32>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).delete::<SceneData>(id.into_inner())
+async fn delete_scene_by_id(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).delete::<SceneData>(id.into_inner()).await
 }
 
-pub fn get_scenes_of_show(dbp: Data<DbPool>, id: Path<u32>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).load_set::<SceneData>(id.into_inner())
+async fn get_scenes_of_show(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).load_set::<SceneData>(id.into_inner()).await
 }
 
-pub fn post_scenes_in_show(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<SceneForm>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).create_child(data, id.into_inner(), |r| format!("/scenes/{}", r))
+async fn post_scenes_in_show(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<SceneForm>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).create_child(data, id.into_inner(), |r| format!("/scenes/{}", r)).await
 }
 
-pub fn patch_scenes_of_show(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<SceneUpdateOrderForm>) -> HttpResponse {
-    let dbc = try_dbc!(dbp);
-    HttpInterface(&dbc).update(data, id.into_inner())
+async fn patch_scenes_of_show(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<SceneUpdateOrderForm>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err(|e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).update(data, id.into_inner()).await
 }

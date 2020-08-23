@@ -1,0 +1,53 @@
+{% macro button(caption=false, icon=false, mif=false, dropdown=false) %}
+    <button class="ribbon-button {% if dropdown %}dropdown-toggle{% endif %}">
+        {% if icon %}
+        <span class="icon">
+            {% if mif %}
+            <span class="{{ icon }}"></span>
+            {% else %}
+            <img src="/img/{{ icon }}-1x.png" alt="{{ icon }}" srcset="/img/{{ icon }}-1x.png, /img/{{ icon }}-2x.png 2x" />
+            {% endif %}
+        </span>
+        {% endif %}
+        {% if caption %}
+        <span class="caption">{{ caption }}</span>
+        {% endif %}
+    </button>
+{% endmacro button %}
+
+{% macro button_split(caption=false, icon=false, mif=false, dropdown=false, options) %}
+    <div class="ribbon-split-button">
+        <button class="ribbon-main">
+            <span class="icon">
+                {% if mif %}
+                <span class="{{ icon }}"></span>
+                {% else %}
+                <img src="/img/{{ icon }}-1x.png" alt="{{ icon }}" srcset="/img/{{ icon }}-1x.png, /img/{{ icon }}-2x.png 2x" />
+                {% endif %}
+            </span>
+        </button>
+        <span class="ribbon-split dropdown-toggle">{{ caption }}</span>
+        <ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
+        {% for option in options %}
+            <li><a href="{{ option[0] }}">{{ option[1] }}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endmacro button %}
+
+{% macro button_small(caption=false, icon=false, mif=false) %}
+    <button class="ribbon-icon-button">
+        {% if icon %}
+        <span class="icon">
+            {% if mif %}
+            <span class="{{ icon }}"></span>
+            {% else %}
+            <img src="/img/{{ icon }}-1x.png" alt="{{ icon }}" srcset="/img/{{ icon }}-1x.png, /img/{{ icon }}-2x.png 2x" />
+            {% endif %}
+        </span>
+        {% endif %}
+        {% if caption %}
+        <span class="caption">{{ caption }}</span>
+        {% endif %}
+    </button>
+{% endmacro button_small %}

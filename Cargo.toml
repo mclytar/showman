@@ -7,13 +7,17 @@ edition = "2018"
 [workspace]
 members = [
     "showman-api",
+    "showman-auth",
     "showman-data",
-    "showman-data-derive"
+    "showman-data-derive",
+    "showman-gui"
 ]
 
 [dependencies]
 showman-api ={ path = "./showman-api" }
+showman-auth ={ path = "./showman-auth" }
 showman-data ={ path = "./showman-data" }
+showman-gui ={ path = "./showman-gui" }
 actix-cors = "0.2.0"
 actix-rt = "1.1.1"
 actix-web = "2.0.0"

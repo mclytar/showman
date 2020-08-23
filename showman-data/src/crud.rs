@@ -2,25 +2,13 @@ use serde::{Serialize};
 
 use crate::self_prelude::*;
 
-pub trait IntoResponse {
-    fn into_response(self) -> HttpResponse;
-}
-
-impl IntoResponse for Result<HttpResponse> {
-    fn into_response(self) -> HttpResponse {
-        match self {
-            Ok(r) => r,
-            Err(r) => r
-        }
-    }
-}
-
 pub trait Create {
     fn create(self, dbc: &DbConnection) -> Result<u32>;
 }
 
 pub trait CreateChild {
     fn create_child(self, dbc: &DbConnection, parent_id: u32) -> Result<u32>;
+    fn parent_resource_name() -> &'static str;
 }
 
 pub trait Load: Sized {
@@ -46,73 +34,66 @@ pub trait Delete {
 pub struct HttpInterface<'a>(pub &'a DbConnection);
 
 impl<'a> HttpInterface<'a> {
-    pub fn create<C, F>(&self, data: C, location: F) -> HttpResponse
+    pub async fn create<C, F>(&self, data: C, location: F) -> Result<HttpResponse>
         where
         C: Create,
         F: Fn(u32) -> String {
         data.create(self.0)
             .map(|r| HttpResponse::Created()
-                .header("Access-Control-Allow-Origin", "*")
+                //.header("Access-Control-Allow-Origin", "*")
                 .header("Location", location(r))
                 .finish())
-            .into_response()
     }
 
-    pub fn create_child<C, F>(&self, data: C, parent_id: u32, location: F) -> HttpResponse
+    pub async fn create_child<C, F>(&self, data: C, parent_id: u32, location: F) -> Result<HttpResponse>
         where
         C: CreateChild,
         F: Fn(u32) -> String {
         data.create_child(self.0, parent_id)
             .map(|r| HttpResponse::Created()
-                .header("Access-Control-Allow-Origin", "*")
+                //.header("Access-Control-Allow-Origin", "*")
                 .header("Location", location(r))
                 .finish())
-            .into_response()
     }
 
-    pub fn load<L>(&self, id: u32) -> HttpResponse
+    pub async fn load<L>(&self, id: u32) -> Result<HttpResponse>
         where L: Load + Serialize {
         L::load(self.0, id)
             .map(|r| HttpResponse::Ok()
-                .header("Access-Control-Allow-Origin", "*")
+                //.header("Access-Control-Allow-Origin", "*")
                 .json(r))
-            .into_response()
     }
 
-    pub fn load_all<L>(&self) -> HttpResponse
+    pub async fn load_all<L>(&self) -> Result<HttpResponse>
         where L: LoadAll + Serialize {
         L::load_all(self.0)
             .map(|r| HttpResponse::Ok()
-                .header("Access-Control-Allow-Origin", "*")
+                //.header("Access-Control-Allow-Origin", "*")
                 .json(r))
-            .into_response()
     }
 
-    pub fn load_set<L>(&self, parent_id: u32) -> HttpResponse
+    pub async fn load_set<L>(&self, parent_id: u32) -> Result<HttpResponse>
         where L: LoadSet + Serialize {
         L::load_set(self.0, parent_id)
             .map(|r| HttpResponse::Ok()
-                .header("Access-Control-Allow-Origin", "*")
+                //.header("Access-Control-Allow-Origin", "*")
                 .json(r))
-            .into_response()
     }
 
-    pub fn update<U>(&self, data: U, id: u32) -> HttpResponse
+    pub async fn update<U>(&self, data: U, id: u32) -> Result<HttpResponse>
         where U: Update {
         data.update(self.0, id)
             .map(|_| HttpResponse::NoContent()
-                .header("Access-Control-Allow-Origin", "*")
+                //.header("Access-Control-Allow-Origin", "*")
                 .finish())
-            .into_response()
     }
 
-    pub fn delete<D>(&self, id: u32) -> HttpResponse
+    pub async fn delete<D>(&self, id: u32) -> Result<HttpResponse>
         where D: Delete {
         D::delete(self.0, id)
             .map(|_| HttpResponse::NoContent()
-                .header("Access-Control-Allow-Origin", "*")
+                //.header("Access-Control-Allow-Origin", "*")
                 .finish())
-            .into_response()
     }
 }
 
@@ -130,15 +111,6 @@ use actix_web::{
 use serde::Deserialize;
 
 use crate::DbPool;
-
-macro_rules! try_dbc {
-    ($dbp:expr) => {
-        match $dbp.get() {
-            Ok(dbc) => dbc,
-            Err(_) => return HttpResponse::ServiceUnavailable().finish()
-        }
-    }
-}
 
 pub struct RestChildResource<C, R, U> {
     name: String,
@@ -169,38 +141,19 @@ where
 
         // ---- HTTP /collection/{id}
         // GET
-        cfg.route(&res_one, web::get().to(|dbp: Data<DbPool>, id: Path<u32>| {
-            let dbc = try_dbc!(dbp);
-            HttpInterface(&dbc).load::<R>(id.into_inner())
-        }));
+        cfg.route(&res_one, web::get().to(get_one::<R>));
         // PATCH
-        cfg.route(&res_one, web::patch().to(|dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<U>| {
-            let dbc = try_dbc!(dbp);
-            HttpInterface(&dbc).update(data, id.into_inner())
-        }));
+        cfg.route(&res_one, web::patch().to(patch_one::<U>));
         // DELETE
-        cfg.route(&res_one, web::delete().to(|dbp: Data<DbPool>, id: Path<u32>| {
-            let dbc = try_dbc!(dbp);
-            HttpInterface(&dbc).delete::<R>(id.into_inner())
-        }));
+        cfg.route(&res_one, web::delete().to(delete_one::<R>));
         // ---- HTTP /parent/{id}/collection
         // GET
-        cfg.route(&res_set, web::get().to(|dbp: Data<DbPool>, id: Path<u32>| {
-            let dbc = try_dbc!(dbp);
-            HttpInterface(&dbc).load_set::<R>(id.into_inner())
-        }));
+        cfg.route(&res_set, web::get().to(get_children::<R>));
         // POST
-        let name = self.name;
-        cfg.route(&res_set, web::post().to(move |dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<C>| {
-            let dbc = try_dbc!(dbp);
-            HttpInterface(&dbc).create_child(data, id.into_inner(), |r| format!("/{}/{}", name, r))
-        }));
+        cfg.route(&res_set, web::post().to(post_child::<C>));
         // ---- HTTP /collection
         // GET
-        cfg.route(&res_all, web::get().to(|dbp: Data<DbPool>| {
-            let dbc = try_dbc!(dbp);
-            HttpInterface(&dbc).load_all::<R>()
-        }));
+        cfg.route(&res_all, web::get().to(get_all::<R>));
         // ---- `Method Not Allowed` for missing methods
         cfg.route(&res_one, web::to(|| HttpResponse::MethodNotAllowed()
             .header("Allow", "GET, PATCH, DELETE")
@@ -212,4 +165,40 @@ where
             .header("Allow", "GET")
             .finish()));
     }
+}
+
+pub async fn get_one<R: Load + Serialize>(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err::<Error, _>( |e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).load::<R>(id.into_inner()).await
+}
+
+pub async fn patch_one<U: Update>(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<U>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err::<Error, _>( |e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).update(data, id.into_inner()).await
+}
+
+pub async fn delete_one<D: Delete>(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err::<Error, _>( |e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).delete::<D>(id.into_inner()).await
+}
+
+pub async fn get_children<R: LoadSet + Serialize>(dbp: Data<DbPool>, id: Path<u32>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err::<Error, _>( |e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).load_set::<R>(id.into_inner()).await
+}
+
+pub async fn post_child<C: CreateChild>(dbp: Data<DbPool>, id: Path<u32>, Form(data): Form<C>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err::<Error, _>( |e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).create_child(data, id.into_inner(), |r| format!("/{}/{}", C::parent_resource_name(), r)).await
+}
+
+pub async fn get_all<R: LoadAll + Serialize>(dbp: Data<DbPool>) -> Result<HttpResponse> {
+    let dbc = dbp.get()
+        .map_err::<Error, _>( |e| error::ErrorServiceUnavailable(e.to_string()))?;
+    HttpInterface(&dbc).load_all::<R>().await
 }

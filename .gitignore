@@ -1,4 +1,6 @@
 /target/
+/www/static
+/www/ToolBarIcons.axicp
 .idea/
 
 .env

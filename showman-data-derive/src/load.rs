@@ -16,8 +16,8 @@ pub fn impl_derive_load(context: Context) -> TokenStream {
                     .filter(#id.eq(id))
                     .first(dbc)
                     .map_err(|e: DBError| match e {
-                        DBError::NotFound => HttpResponse::NotFound().finish(),
-                        _ => HttpResponse::InternalServerError().body(format!("{}", e))
+                        DBError::NotFound => actix_web::error::ErrorNotFound(""),
+                        _ => actix_web::error::ErrorInternalServerError(format!("{}", e))
                     })?;
 
                 Ok(result)
@@ -39,7 +39,7 @@ pub fn impl_derive_load_all(context: Context) -> TokenStream {
                 let result = #table
                     #(.order(#order_by.asc()))*
                     .load(dbc)
-                    .map_err(|e: DBError| HttpResponse::InternalServerError().body(format!("{}", e)))?;
+                    .map_err(|e: DBError| actix_web::error::ErrorInternalServerError(format!("{}", e)))?;
 
                 Ok(result)
             }
@@ -69,8 +69,8 @@ pub fn impl_derive_load_set(context: Context) -> TokenStream {
                     #(.order(#order_by.asc()))*
                     .load(dbc)
                     .map_err(|e: DBError| match e {
-                        DBError::NotFound => HttpResponse::NotFound().finish(),
-                        _ => HttpResponse::InternalServerError().body(format!("{}", e))
+                        DBError::NotFound => actix_web::error::ErrorNotFound(""),
+                        _ => actix_web::error::ErrorInternalServerError(format!("{}", e))
                     })?;
 
                 Ok(result)

@@ -12,6 +12,9 @@ pub mod schema;
 
 pub(crate) mod self_prelude {
     pub use actix_web::HttpResponse;
+    pub use actix_web::error;
+    pub use actix_web::error::Error;
+    pub use actix_web::error::Result;
     pub use chrono::NaiveDateTime;
     pub use diesel::prelude::*;
     pub use diesel::result::Error as DBError;
@@ -20,7 +23,6 @@ pub(crate) mod self_prelude {
     pub use crate::DbConnection;
     pub use crate::last_insert_id;
     pub use crate::crud::*;
-    pub use crate::result::Result;
 }
 
 pub mod prelude {

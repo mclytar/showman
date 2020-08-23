@@ -1,0 +1,119 @@
+{% extends "__page.html" %}
+{% block main %}
+    <div class="row h-100 w-100 m-0">
+        <div class="container mb-4">
+            <h1><span class="mif-books"></span> {{ show.title }}</h1>
+            <ul data-role="tabs" data-expand="true">
+                <li><a href="#_overview">Generale</a></li>
+                <li><a href="#_scenes">Scene</a></li>
+                <li><a href="#_characters">Personaggi</a></li>
+                <li><a href="#_props">Oggetti di scena</a></li>
+                <li class="disabled"><a href="#_sounds">Suoni</a></li>
+                <li class="disabled"><a href="#_tracks">Canzoni</a></li>
+            </ul>
+            <div class="border bd-default no-border-top p-2 bg-white" style="margin-top: -1px">
+                <div id="_overview">
+                    <button id="admin_panel_toggle" class="image-button warning w-100">
+                        <span class="icon mif-security"></span>
+                        <span class="caption">Amministrazione</span>
+                    </button>
+                    <div class="w-100 m-0 p-0">
+                        <div class="pos-relative border bd-amber w-100 p-2" data-role="collapse" data-toggle-element="#admin_panel_toggle" data-collapsed="true">
+                            <button class="image-button yellow w-100 mt-1 mb-1">
+                                <span class="icon mif-profile"></span>
+                                <span class="caption">Modifica ruoli</span>
+                            </button>
+                            <button  class="image-button yellow w-100 mt-1 mb-1">
+                                <span class="icon mif-pencil"></span>
+                                <span class="caption">Rinomina spettacolo</span>
+                            </button>
+                            <button class="image-button alert w-100 mt-1 mb-1">
+                                <span class="icon mif-bin"></span>
+                                <span class="caption">Elimina spettacolo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="_scenes">
+                    <div id="scene_list" data-role="accordion" data-one-frame="false" data-show-active="true">
+                        {{ components::scene(scene_id=1, scene_title="Prologo", scene_description="Scena introduttiva") }}
+                        {{ components::scene(scene_id=2, scene_title="Atto I", scene_description="Prima scena") }}
+                        {{ components::scene(scene_id=2, scene_title="Atto II", scene_description="Seconda scena") }}
+                        {{ components::scene(scene_id=2, scene_title="Atto III", scene_description="Terza scena") }}
+                        {{ components::scene(scene_id=1, scene_title="Epilogo", scene_description="E vissero tutti felici e contenti") }}
+                    </div>
+                    <hr>
+                    <div class="text-right">
+                        <button class="image-button" onclick="btnReorder_click(this)">
+                            <span class="icon mif-loop"></span>
+                            <span class="caption">Riordina scene</span>
+                        </button>
+                        <button class="image-button info">
+                            <span class="icon mif-plus"></span>
+                            <span class="caption">Nuova scena...</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="_characters">
+                    <div data-role="accordion" data-one-frame="false" data-show-active="true">
+                        {{ components::character(character_name="Paperino", actor_id=2, actor_name="TonnaultStateaux", character_description="Paperino è un papero incomprensibile") }}
+                        {{ components::character(character_name="Pippo", actor_id=1, actor_name="mclytar", character_description="Pippo è un cane che cammina su due piedi") }}
+                        {{ components::character(character_name="Pluto", actor_id=2, actor_name="drago", character_description="Pluto è un cane che non cammina su due piedi") }}
+                        {{ components::character(character_name="Topolino") }}
+                    </div>
+                </div>
+                <div id="_props">
+                    <h2>Props</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="scene_dialog"
+         class="dialog primary"
+         data-role="dialog"
+         data-overlay-click-close="true"
+         data-close-button="true">
+        <div class="dialog-title">Dialog title</div>
+        <div class="dialog-content">Dialog content</div>
+        <div class="dialog-actions" data-actions-align="right">
+            <button class="button js-dialog-close primary">Ok</button>
+        </div>
+    </div>
+    <script>
+    function btnReorder_click(sender) {
+        let button = $(sender);
+        if (button.hasClass("warning")) {
+            $("#scene_list .drag-handle").each((_, item) => {
+                $(item).hide();
+            })
+            button.removeClass("warning");
+            Metro.dialog.create({
+                title: "Not implemented (yet)",
+                content: "The reorder functionality has not been implemented yet. Please refresh the page to restore previous order.",
+                clsDialog: "warning",
+                actionsAlign: "right",
+                actions: [
+                    {
+                        caption: "Ok",
+                        cls: "js-dialog-close primary"
+                    }
+                ]
+            });
+        } else {
+            $("#scene_list .drag-handle").each((_, item) => {
+                $(item).show();
+            })
+            button.addClass("warning");
+        }
+
+        console.log(sender);
+    }
+
+    $(function () {
+        $("#scene_list").sortable({
+            cursor: "move",
+            handle: ".drag-handle"
+        });
+    })
+    </script>
+{% endblock main %}

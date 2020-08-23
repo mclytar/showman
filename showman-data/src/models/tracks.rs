@@ -5,6 +5,7 @@ use crate::schema::track;
 /// Creation form for `Track` table.
 #[derive(CreateChild, Deserialize)]
 #[table_name = "track"]
+#[parent_resource_name="show"]
 #[parent_id = "show_id"]
 pub struct TrackForm {
     pub title: String,

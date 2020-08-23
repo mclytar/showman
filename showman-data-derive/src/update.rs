@@ -15,8 +15,8 @@ pub fn impl_derive_update(context: Context) -> TokenStream {
                     .set(self)
                     .execute(dbc)
                     .map_err(|e: DBError| match e {
-                        DBError::NotFound => HttpResponse::NotFound().finish(),
-                        _ => HttpResponse::InternalServerError().body(format!("{}", e))
+                        DBError::NotFound => actix_web::error::ErrorNotFound(""),
+                        _ => actix_web::error::ErrorInternalServerError(format!("{}", e))
                     })?;
 
                 Ok(())
