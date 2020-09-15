@@ -2,7 +2,7 @@
 {% block main %}
     <div class="row h-100 w-100 m-0">
         <aside id="side-nav" class="cell-md bg-white">
-            <nav class="container border bd-cyan">
+            <nav class="container">
                 <h4>Spettacoli</h4>
                 <ul class="custom-list-marker text-medium">
                     {% if shows | length > 0 %}{% for show in shows %}
@@ -17,7 +17,7 @@
                 </button>
             </nav>
         </aside>
-        <main class="cell-md border bd-gray">
+        <main class="cell-md border-left bd-gray">
             <ul class="feed-list">
                 {{ components::feeditem(avatar="https://picsum.photos/48/48/?random", title="<strong>mclytar</strong> created an item.", contents="This element") }}
                 {{ components::feeditem(avatar="https://picsum.photos/48/48/?random", title="<strong>mclytar</strong> created this web-app.", contents="Go to the <a href='/'>app</a>") }}
