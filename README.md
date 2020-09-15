@@ -9,16 +9,18 @@ At the moment, the project is under complete rework.
 ## Installation and configuration
 
 1. Install MySql server/community/whatever.
-1. Install OpenSSL.
-1. Install Diesel (`cargo install diesel --no-default-features features mysql`).
-1. `git clone` repository.
-1. Create `.env` file as follows:
+2. Install OpenSSL.
+3. Install Diesel (`cargo install diesel --no-default-features features mysql`).
+4. `git clone` repository.
+5. Create `.env` file as follows:
     - `DATABASE_URL=mysql://server:server_password@127.0.0.1/showman` (replace `server` and `server_password` with username and password);
     - `MIGRATION_DIRECTORY=assets/migration`;
     - `API_HOSTNAME=api.localhost`;
     - `AUTH_HOSTNAME=auth.localhost`;
     - `HOSTNAME=localhost`.
-1. Run `diesel setup`.
+6. Run `diesel setup`.
+
+**TODO:** (partially) automate process.
 
 ## To-Do
 
